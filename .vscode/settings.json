@@ -1,0 +1,26 @@
+{
+    "Lua.diagnostics.globals": [
+        "addon",
+        "T",
+        "ashita",
+        "AshitaCore",
+        "ImGuiWindowFlags_NoDecoration",
+        "ImGuiWindowFlags_AlwaysAutoResize",
+        "ImGuiWindowFlags_NoSavedSettings",
+        "ImGuiWindowFlags_NoFocusOnAppearing",
+        "ImGuiWindowFlags_NoNav",
+        "bit",
+        "ImGuiTableFlags_Resizable",
+        "ImGuiTableFlags_PadOuterX",
+        "ImGuiTableFlags_Borders",
+        "ImGuiTableFlags_NoHostExtendX",
+        "ImGuiTableColumnFlags_None",
+        "ImGuiTabBarFlags_None",
+        "ImGuiCond_Always",
+        "ImGuiCol_TableRowBg",
+        "ImGuiCol_WindowBg",
+        "ImGuiWindowFlags_NoBackground",
+        "ImGuiTableFlags_RowBg",
+        "ImGuiCol_TableRowBgAlt"
+    ]
+}
