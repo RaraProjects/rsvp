@@ -90,5 +90,7 @@ Timers.Format = function(time, negative_time)
     hour   = string.format("%02.f", math.floor(time / 3600))
     minute = string.format("%02.f", math.floor((time / 60) - (hour * 60)))
     second = string.format("%02.f", math.floor(time % 60))
+
+    if hour and tonumber(hour) > 99 then return "LONG", time, negative_time end
     return sign .. hour .. ":" .. minute .. ":" .. second, time, negative_time
 end

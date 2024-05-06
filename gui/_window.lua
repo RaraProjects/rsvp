@@ -27,3 +27,19 @@ Window.Colors = T{
 require("gui.clock")
 require("gui.create_reminder")
 require("gui.active_timer_list")
+
+------------------------------------------------------------------------------------------------------
+-- Creates a help text marker.
+------------------------------------------------------------------------------------------------------
+---@param text string
+------------------------------------------------------------------------------------------------------
+Window.HelpMarker = function(text)
+    UI.TextDisabled("(?)")
+    if UI.IsItemHovered() then
+        UI.BeginTooltip()
+        UI.PushTextWrapPos(UI.GetFontSize() * 25)
+        UI.TextUnformatted(text)
+        UI.PopTextWrapPos()
+        UI.EndTooltip()
+    end
+end
