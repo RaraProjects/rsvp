@@ -26,7 +26,7 @@ Reminder.Table_Flags = bit.bor(ImGuiTableFlags_Resizable, ImGuiTableFlags_PadOut
 -- Initializes the clock window.
 -- ------------------------------------------------------------------------------------------------------
 Reminder.Initialize = function()
-    UI.SetNextWindowPos({KooKoo.Settings.Reminder.X_Pos, KooKoo.Settings.Reminder.Y_Pos}, ImGuiCond_Always)
+    UI.SetNextWindowPos({RSVP.Settings.Reminder.X_Pos, RSVP.Settings.Reminder.Y_Pos}, ImGuiCond_Always)
     Reminder.Display()
 end
 
@@ -38,7 +38,7 @@ Reminder.Display = function()
         local flags = Window.Flags
         UI.PushStyleColor(ImGuiCol_WindowBg, Window.Colors.DEFAULT)
         if UI.Begin("Reminder", true, flags) then
-            KooKoo.Settings.Reminder.X_Pos, KooKoo.Settings.Reminder.Y_Pos = UI.GetWindowPos()
+            RSVP.Settings.Reminder.X_Pos, RSVP.Settings.Reminder.Y_Pos = UI.GetWindowPos()
 
             UI.SetNextItemWidth(150)
             UI.InputText("Name", Reminder.Buffers.Name, 100)

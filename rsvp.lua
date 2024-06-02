@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 addon.author = "Metra"
-addon.name = "KooKoo"
+addon.name = "rsvp"
 addon.version = "0.9.0"
 
 Settings = require("settings")
@@ -32,7 +32,7 @@ Settings = require("settings")
 _Globals = T{}
 _Globals.Initialized = false
 
-KooKoo = T{}
+RSVP = T{}
 
 UI = require("imgui")
 require("ashita._ashita")
@@ -48,7 +48,7 @@ ashita.events.register('d3d_present', 'present_cb', function ()
         if not Ashita.Player.Is_Logged_In() then return nil end
 
         -- Initialize settings from file.
-        KooKoo.Settings = T{
+        RSVP.Settings = T{
             Clock = Settings.load(Clock.Defaults, "clock"),
             List = Settings.load(List.Defaults, "list"),
             Reminder = Settings.load(Reminder.Defaults, "reminder"),

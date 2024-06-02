@@ -20,7 +20,7 @@ ImGuiTableFlags_NoHostExtendX, ImGuiTableFlags_RowBg)
 -- Initializes the clock window.
 -- ------------------------------------------------------------------------------------------------------
 Clock.Initialize = function()
-    UI.SetNextWindowPos({KooKoo.Settings.Clock.X_Pos, KooKoo.Settings.Clock.Y_Pos}, ImGuiCond_Always)
+    UI.SetNextWindowPos({RSVP.Settings.Clock.X_Pos, RSVP.Settings.Clock.Y_Pos}, ImGuiCond_Always)
     Clock.Display()
 end
 
@@ -32,7 +32,7 @@ Clock.Display = function()
         local flags = Clock.Window_Flags
         UI.PushStyleColor(ImGuiCol_TableRowBg, Window.Colors.BLACK)
         if UI.Begin("Clock", true, flags) then
-            KooKoo.Settings.Clock.X_Pos, KooKoo.Settings.Clock.Y_Pos = UI.GetWindowPos()
+            RSVP.Settings.Clock.X_Pos, RSVP.Settings.Clock.Y_Pos = UI.GetWindowPos()
 
             if UI.BeginTable("Clock", 1, Clock.Table_Flags) then
                 local now = os.time()

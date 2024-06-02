@@ -20,7 +20,7 @@ ImGuiTableFlags_NoHostExtendX, ImGuiTableFlags_RowBg)
 -- Initializes the clock window.
 -- ------------------------------------------------------------------------------------------------------
 List.Initialize = function()
-    UI.SetNextWindowPos({KooKoo.Settings.List.X_Pos, KooKoo.Settings.List.Y_Pos}, ImGuiCond_Always)
+    UI.SetNextWindowPos({RSVP.Settings.List.X_Pos, RSVP.Settings.List.Y_Pos}, ImGuiCond_Always)
     List.Display()
 end
 
@@ -33,7 +33,7 @@ List.Display = function()
         UI.PushStyleColor(ImGuiCol_TableRowBgAlt, Window.Colors.DEFAULT)
 
         if UI.Begin("List", true, List.Window_Flags) then
-            KooKoo.Settings.List.X_Pos, KooKoo.Settings.List.Y_Pos = UI.GetWindowPos()
+            RSVP.Settings.List.X_Pos, RSVP.Settings.List.Y_Pos = UI.GetWindowPos()
 
             local col_flags = bit.bor(ImGuiTableColumnFlags_None)
             if UI.BeginTable("List", 3, List.Table_Flags) then
