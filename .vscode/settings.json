@@ -21,6 +21,9 @@
         "ImGuiCol_WindowBg",
         "ImGuiWindowFlags_NoBackground",
         "ImGuiTableFlags_RowBg",
-        "ImGuiCol_TableRowBgAlt"
+        "ImGuiCol_TableRowBgAlt",
+        "ImGuiSelectableFlags_None",
+        "ImGuiInputTextFlags_CallbackCharFilter",
+        "ImGuiInputTextFlags_AllowTabInput"
     ]
 }

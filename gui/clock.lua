@@ -29,9 +29,8 @@ end
 -- ------------------------------------------------------------------------------------------------------
 Clock.Display = function()
     if Clock.Visible then
-        local flags = Clock.Window_Flags
         UI.PushStyleColor(ImGuiCol_TableRowBg, Window.Colors.BLACK)
-        if UI.Begin("Clock", true, flags) then
+        if UI.Begin("Clock", true, Clock.Window_Flags) then
             RSVP.Settings.Clock.X_Pos, RSVP.Settings.Clock.Y_Pos = UI.GetWindowPos()
 
             if UI.BeginTable("Clock", 1, Clock.Table_Flags) then

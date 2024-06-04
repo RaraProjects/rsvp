@@ -7,12 +7,11 @@ Window.Defaults = T{
     Y_Pos  = 100,
 }
 
-Window.Flags = bit.bor(ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_AlwaysAutoResize,
+Window.Window_Flags = bit.bor(ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_AlwaysAutoResize,
 ImGuiWindowFlags_NoSavedSettings, ImGuiWindowFlags_NoFocusOnAppearing,
 ImGuiWindowFlags_NoNav)
 
-Window.Tabs = T{}
-Window.Tabs.Flags = ImGuiTabBarFlags_None
+Window.Tab_Flags = ImGuiTabBarFlags_None
 
 Window.Colors = T{
     WHITE    = {1.0,  1.0,  1.0,  1.0},
@@ -25,21 +24,6 @@ Window.Colors = T{
 }
 
 require("gui.clock")
-require("gui.create_reminder")
-require("gui.active_timer_list")
-
-------------------------------------------------------------------------------------------------------
--- Creates a help text marker.
-------------------------------------------------------------------------------------------------------
----@param text string
-------------------------------------------------------------------------------------------------------
-Window.HelpMarker = function(text)
-    UI.TextDisabled("(?)")
-    if UI.IsItemHovered() then
-        UI.BeginTooltip()
-        UI.PushTextWrapPos(UI.GetFontSize() * 25)
-        UI.TextUnformatted(text)
-        UI.PopTextWrapPos()
-        UI.EndTooltip()
-    end
-end
+require("rsvp_creation._rsvp_creation")
+require("rsvp_list._rsvp_list")
+require("gui.config")

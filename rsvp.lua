@@ -28,17 +28,17 @@ addon.name = "rsvp"
 addon.version = "0.9.0"
 
 Settings = require("settings")
+UI = require("imgui")
+require("ashita._ashita")
+require("gui._window")
+require("timers._timers")
+require("file")
+require("inputs")
 
 _Globals = T{}
 _Globals.Initialized = false
 
 RSVP = T{}
-
-UI = require("imgui")
-require("ashita._ashita")
-require("gui._window")
-require("timers")
-require("file")
 
 -- ------------------------------------------------------------------------------------------------------
 -- Catch the screen rendering packet.
@@ -64,6 +64,7 @@ ashita.events.register('d3d_present', 'present_cb', function ()
     Clock.Display()
     Reminder.Display()
     List.Display()
+    Config.Display()
     Sound.Unlock_Sound()
 end)
 
@@ -73,8 +74,8 @@ end)
 ------------------------------------------------------------------------------------------------------
 ashita.events.register('command', 'command_cb', function (e)
     local command_args = e.command:lower():args()
----@diagnostic disable-next-line: undefined-field
-    if table.contains({"/kookoo"}, command_args[1]) or table.contains({"/koo"}, command_args[1]) then
+    ---@diagnostic disable-next-line: undefined-field
+    if table.contains({"/rsvp"}, command_args[1]) then
         local arg = command_args[2]
         if arg == "new" then
             Reminder.Visible = not Reminder.Visible

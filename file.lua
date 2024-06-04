@@ -12,7 +12,7 @@ File.Save = function()
     local path = File.Path()
     File.File_Exists(path)
 
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     local file = io.open(('%s/%s'):fmt(path, File.Filename), "w")
     if file ~= nil then
         for timer_name, timer_data in pairs(Timers.Timers) do
@@ -32,7 +32,7 @@ File.Load = function()
     local path = File.Path()
     File.File_Exists(path)
     Timers.Timers = T{}
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     for line in io.lines(('%s/%s'):fmt(path, File.Filename)) do
         local pieces = {}
         local piece_index = 1
@@ -56,7 +56,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 File.Path = function()
     local directory = tostring(AshitaCore:GetInstallPath()) .. File.Addend_Path
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     return ('%s/'):fmt(directory)
 end
 
