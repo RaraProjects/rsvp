@@ -18,6 +18,7 @@ ImGuiWindowFlags_NoNav, ImGuiWindowFlags_NoBackground)
 List.Table_Flags = bit.bor(ImGuiTableFlags_Borders, ImGuiTableFlags_RowBg)
 
 require("rsvp_list.buttons")
+require("rsvp_list.publishing")
 
 -- ------------------------------------------------------------------------------------------------------
 -- Initializes the clock window.
@@ -42,6 +43,7 @@ List.Display = function()
                 local columns, show_groups = List.Columns()
 
                 List.Buttons.Mode_Buttons()
+                if List.Report_Mode then List.Publishing.Chat_Selection() end
                 if UI.BeginTable("List", columns, List.Table_Flags) then
                     List.Headers(show_groups)
 
@@ -125,7 +127,7 @@ List.Rows = function(name, timer, color, show_groups, group, collapsed)
     UI.TableNextColumn() List.Buttons.Delete_Timer(name)
     UI.TableNextColumn() UI.Text(tostring(name))
     UI.TableNextColumn() UI.TextColored(color, timer)
-    if List.Report_Mode then UI.TableNextColumn() UI.Button(" R ") end
+    if List.Report_Mode then UI.TableNextColumn() List.Buttons.Report_Timer(name) end
     if show_groups and group and List.Group_Mode then
         UI.TableNextColumn() if not collapsed[group] then List.Buttons.Set_Group_Expansion(group) end
         if not collapsed[group] then UI.TableNextColumn() List.Buttons.Delete_Group(group) end

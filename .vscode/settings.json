@@ -27,6 +27,7 @@
         "ImGuiInputTextFlags_AllowTabInput",
         "ImGuiCol_Button",
         "ImGuiCol_ButtonHovered",
-        "ImGuiCol_ButtonActive"
+        "ImGuiCol_ButtonActive",
+        "ImGuiComboFlags_None"
     ]
 }

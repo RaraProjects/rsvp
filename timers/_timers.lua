@@ -179,3 +179,14 @@ Timers.Validate = function()
     end
     return Timers.Errors.NO_ERROR
 end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Reports a timer to chat.
+-- ------------------------------------------------------------------------------------------------------
+---@param timer_name string
+-- ------------------------------------------------------------------------------------------------------
+Timers.Report = function(timer_name)
+    if not timer_name then return nil end
+    if not Timers.Timers[timer_name] then return nil end
+    Ashita.Chat.Add_To_Chat(List.Publishing.Chat_Mode.Prefix, tostring(Timers.Check(timer_name, true)))
+end

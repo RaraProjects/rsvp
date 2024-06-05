@@ -20,6 +20,18 @@ List.Buttons.Delete_Timer = function(timer_name)
 end
 
 -- ------------------------------------------------------------------------------------------------------
+-- Creates the report timer button.
+-- ------------------------------------------------------------------------------------------------------
+---@param timer_name string
+-- ------------------------------------------------------------------------------------------------------
+List.Buttons.Report_Timer = function(timer_name)
+    if not timer_name then return nil end
+    UI.PushID(timer_name)
+    if UI.Button(" R ") then Timers.Report(timer_name) end
+    UI.PopID()
+end
+
+-- ------------------------------------------------------------------------------------------------------
 -- Toggles visibility of non-first timers in a group.
 -- ------------------------------------------------------------------------------------------------------
 ---@param group string

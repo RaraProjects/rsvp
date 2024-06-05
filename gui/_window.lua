@@ -21,7 +21,7 @@ Window.Colors = T{
     YELLOW   = {0.9,  1.0,  0.0,  1.0},
     DIM      = {0.4,  0.4,  0.4,  1.0},
     DEFAULT  = {0.18, 0.20, 0.23, 0.96},
-    INACTIVE = {0.4, 0.4, 0.4, 1.0},
+    INACTIVE = {0.4,  0.4,  0.4,  1.0},
 }
 
 require("gui.clock")
