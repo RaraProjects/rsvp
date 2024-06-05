@@ -44,9 +44,11 @@ end
 Reminder.Create_Minute_Timer = function()
     if UI.BeginTabItem("Minutes", Window.Tab_Flags) then
         UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
+        local error = Timers.Validate()
+        if error ~= Timers.Errors.NO_ERROR then UI.TextColored(Window.Colors.RED, error) end
         UI.Separator()
 
-        UI.Text("Quick Buttons")
+        UI.Text("Quick Timers")
         if UI.BeginTable("Buttons", 5, Reminder.Table_Flags) then
             UI.TableNextColumn() Reminder.Buttons.Minute(5)
             UI.TableNextColumn() Reminder.Buttons.Minute(7)
@@ -59,7 +61,7 @@ Reminder.Create_Minute_Timer = function()
         end
         UI.Separator()
 
-        UI.Text("Custom")
+        UI.Text("Custom Timers")
         UI.SetNextItemWidth(50) UI.InputText("Minutes", Inputs.Buffers.Minutes, 4)
         UI.SameLine() UI.Text(" ") UI.SameLine() Reminder.Buttons.Minute(tonumber(Inputs.Buffers.Minutes[1]), "Create")
         UI.EndTabItem()
@@ -72,6 +74,8 @@ end
 Reminder.Create_Future_Timer = function()
     if UI.BeginTabItem("Time", Window.Tab_Flags) then
         UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
+        local error = Timers.Validate()
+        if error ~= Timers.Errors.NO_ERROR then UI.TextColored(Window.Colors.RED, error) end
         UI.Separator()
 
         Inputs.Set_Hour()
@@ -100,7 +104,7 @@ Reminder.Create_Future_Timer = function()
 
         Reminder.Buttons.Schedule()
         UI.SameLine() Reminder.Buttons.Kings()
-        UI.SameLine() UI.Text("1H25")
+        UI.SameLine() Reminder.Buttons.Wyrms()
         UI.EndTabItem()
     end
 end

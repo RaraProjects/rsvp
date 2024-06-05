@@ -5,6 +5,13 @@ Timers.Sorted = T{}
 Timers.Count = 0
 require("timers.groups")
 
+Timers.Errors = T{
+    NO_ERROR = "No Error",
+    ERROR    = "Error",
+    NO_NAME  = "Name is required.",
+    EXISTS   = "Timer already exists.",
+}
+
 -- --------------------------------------------------------------------------
 -- Start the timer.
 -- --------------------------------------------------------------------------
@@ -56,8 +63,11 @@ Timers.Create = function(name, start_time, end_time, group)
     if not Timers.Timers[name] then Timers.Timers[name] = T{} end
     Timers.Timers[name].Start = start_time
     Timers.Timers[name].End   = end_time
-    Timers.Timers[name].Group = -1
-    if group then Timers.Timers[name].Group = group end
+    Timers.Timers[name].Group = Timers.Groups.NO_GROUP
+    if group then
+        Timers.Timers[name].Group = group
+        Timers.Groups.List[group] = true
+    end
     Timers.Count = Timers.Count + 1
     Timers.Sort()
 end
@@ -116,7 +126,7 @@ end
 -- Formats the display timer.
 -- --------------------------------------------------------------------------
 ---@param time? number duration in seconds.
----@param negative_time? boolean if a countdown is negative add negative sign. 
+---@param negative_time? boolean if a countdown is negative add negative sign.
 ---@return string, number?, boolean|nil?
 -- --------------------------------------------------------------------------
 Timers.Format = function(time, negative_time)
@@ -150,4 +160,22 @@ Timers.Simulate = function()
     end
 
     return Timers.Format(time, negative), color
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Determines if a timer can be created or not.
+-- Cannot create a timer if there isn't a name provided or a timer with same name already exists.
+-- ------------------------------------------------------------------------------------------------------
+---@return string
+-- ------------------------------------------------------------------------------------------------------
+Timers.Validate = function()
+    local timer_name = Inputs.Name()
+    if not timer_name then
+        return Timers.Errors.ERROR
+    elseif string.len(timer_name) == 0 then
+        return Timers.Errors.NO_NAME
+    elseif Timers.Timers[timer_name] then
+        return Timers.Errors.EXISTS
+    end
+    return Timers.Errors.NO_ERROR
 end

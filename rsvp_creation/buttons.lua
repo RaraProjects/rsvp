@@ -7,58 +7,95 @@ Reminder.Buttons = T{}
 ---@param caption? string name of the button the user will click to create this timer (quick button).
 -- ------------------------------------------------------------------------------------------------------
 Reminder.Buttons.Minute = function(minutes, caption)
+    local inactive = false
+    local error = Timers.Validate()
+    if error ~= Timers.Errors.NO_ERROR then inactive = true end
+
     if not minutes then minutes = 0 end
-    local clicked = 0
     local button_name = string.format("%2d", minutes)
     if caption then button_name = caption end
 
-    if UI.Button(button_name) then
-        clicked = 1
-        if minutes == 0 then return nil end
-        if clicked and 1 then
-            local timer_name = Inputs.Buffers.Name[1]
-            if string.len(timer_name) == 0 then timer_name = tostring(os.date("%H:%M:%S", os.time())) .. " (" .. tostring(minutes) .. ")" end
-            Timers.Start(timer_name, minutes)
-        end
+    if inactive then
+        UI.PushStyleColor(ImGuiCol_Button, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonHovered, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonActive, Window.Colors.INACTIVE)
     end
+    if UI.Button(button_name) then
+        local timer_name = Inputs.Name()
+        if minutes == 0 then return nil end
+        if not inactive then Timers.Start(timer_name, minutes) end
+    end
+    if inactive then UI.PopStyleColor(3) end
 end
 
 -- ------------------------------------------------------------------------------------------------------
 -- Create a quick button to set a reminder {minutes} into the future.
 -- ------------------------------------------------------------------------------------------------------
 Reminder.Buttons.Schedule = function()
-    local clicked = 0
-    if UI.Button("Create") then
-        clicked = 1
-        if clicked and 1 then
-            local new_instant = Reminder.Handle_Date_Input()
-            local future_minutes = (new_instant - os.time()) / 60
+    local inactive = false
+    local error = Timers.Validate()
+    if error ~= Timers.Errors.NO_ERROR then inactive = true end
 
-            -- Default the name to the time the timer was set if no name is provided.
-            local timer_name = Inputs.Name()
-            if string.len(timer_name) == 0 then timer_name = tostring(os.date("%H:%M:%S", new_instant)) end
-
-            Timers.Start(timer_name, future_minutes)
-        end
+    if inactive then
+        UI.PushStyleColor(ImGuiCol_Button, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonHovered, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonActive, Window.Colors.INACTIVE)
     end
+    if UI.Button("Create") then
+        local timer_name = Inputs.Name()
+        local new_instant = Reminder.Handle_Date_Input()
+        local future_minutes = (new_instant - os.time()) / 60
+        if not inactive then Timers.Start(timer_name, future_minutes) end
+    end
+    if inactive then UI.PopStyleColor(3) end
 end
 
 -- ------------------------------------------------------------------------------------------------------
 -- Create a seven alerts 10 minutes apart from the start time.
 -- ------------------------------------------------------------------------------------------------------
 Reminder.Buttons.Kings = function()
-    local clicked = 0
+    local inactive = false
+    local error = Timers.Validate()
+    if error ~= Timers.Errors.NO_ERROR then inactive = true end
+
+    if inactive then
+        UI.PushStyleColor(ImGuiCol_Button, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonHovered, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonActive, Window.Colors.INACTIVE)
+    end
     if UI.Button("10M7") then
-        clicked = 1
-        if clicked and 1 then
-            local start_time = Reminder.Handle_Date_Input()
-            local future_minutes = (start_time - os.time()) / 60
-            local timer_name = Inputs.Name()
-            if string.len(timer_name) == 0 then timer_name = tostring(os.date("%H:%M:%S", os.time())) end
-            for i = 0, 6, 1 do
-                local name = timer_name .. " (" .. tostring(i + 1) .. "/7)"
-                Timers.Start(name, future_minutes + (10 * i), timer_name)
-            end
+        local timer_name = Inputs.Name()
+        local start_time = Reminder.Handle_Date_Input()
+        local future_minutes = (start_time - os.time()) / 60
+        for i = 0, 6, 1 do
+            local name = timer_name .. " (" .. tostring(i + 1) .. "/7)"
+            Timers.Start(name, future_minutes + (10 * i), timer_name)
         end
     end
+    if inactive then UI.PopStyleColor(3) end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Create a seven alerts 10 minutes apart from the start time.
+-- ------------------------------------------------------------------------------------------------------
+Reminder.Buttons.Wyrms = function()
+    local inactive = false
+    local error = Timers.Validate()
+    if error ~= Timers.Errors.NO_ERROR then inactive = true end
+
+    if inactive then
+        UI.PushStyleColor(ImGuiCol_Button, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonHovered, Window.Colors.INACTIVE)
+        UI.PushStyleColor(ImGuiCol_ButtonActive, Window.Colors.INACTIVE)
+    end
+    if UI.Button("1H25") then
+        local timer_name = Inputs.Name()
+        local start_time = Reminder.Handle_Date_Input()
+        local future_minutes = (start_time - os.time()) / 60
+        for i = 0, 24, 1 do
+            local name = timer_name .. " (" .. tostring(i + 1) .. "/25)"
+            Timers.Start(name, future_minutes + (60 * i), timer_name)
+        end
+    end
+    if inactive then UI.PopStyleColor(3) end
 end

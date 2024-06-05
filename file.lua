@@ -1,9 +1,10 @@
 File = T{}
 
-File.Addend_Path = "config\\KooKoo"
+File.Addend_Path = "config\\rsvp"
 File.Filename = "timers"
 File.Delimter = "|||"
 File.Pattern  = "([^" .. File.Delimter .. "]+)"
+File.NO_GROUP = "@!@!@!@!@"
 
 -- ------------------------------------------------------------------------------------------------------
 -- Write to file.
@@ -18,7 +19,12 @@ File.Save = function()
         for timer_name, timer_data in pairs(Timers.Timers) do
             local timer_start = timer_data.Start
             local timer_end = timer_data.End
-            local save_string = tostring(timer_name) .. File.Delimter .. tostring(timer_start) .. File.Delimter .. tostring(timer_end)
+            local timer_group = timer_data.Group
+            if not timer_group then timer_group = Timers.Groups.NO_GROUP end
+            local save_string = tostring(timer_name) .. File.Delimter
+                             .. tostring(timer_start) .. File.Delimter
+                             .. tostring(timer_end) .. File.Delimter
+                             .. tostring(timer_group)
             file:write(save_string .. "\n")
         end
         file:close()
@@ -46,7 +52,9 @@ File.Load = function()
             if not timer_start then timer_start = os.time() end
             local timer_end = tonumber(pieces[3])
             if not timer_end then timer_end = os.time() end
-            Timers.Create(timer_name, timer_start, timer_end)
+            local timer_group = tostring(pieces[4])
+            if not timer_group then timer_group = Timers.Groups.NO_GROUP end
+            Timers.Create(timer_name, timer_start, timer_end, timer_group)
         end
     end
 end
@@ -66,7 +74,12 @@ end
 ---@param path string
 -- ------------------------------------------------------------------------------------------------------
 File.File_Exists = function(path)
-    if not ashita.fs.exists(path) then
-        ashita.fs.create_dir(path)
+    if not ashita.fs.exists(path) then ashita.fs.create_dir(path) end
+    ---@diagnostic disable-next-line: undefined-field
+    local file = io.open(('%s/%s'):fmt(path, File.Filename), "r")
+    if not file then
+        ---@diagnostic disable-next-line: undefined-field
+        file = io.open(('%s/%s'):fmt(path, File.Filename), "w")
+        if file then file:close() end
     end
 end

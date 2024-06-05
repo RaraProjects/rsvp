@@ -100,9 +100,9 @@ end
 List.Headers = function(show_groups)
     local col_flags = bit.bor(ImGuiTableColumnFlags_None)
     UI.TableSetupColumn("Del.",  col_flags)
-    if List.Report_Mode then UI.TableSetupColumn("Rep.",  col_flags) end
     UI.TableSetupColumn("Name",  col_flags)
     UI.TableSetupColumn("Time",  col_flags)
+    if List.Report_Mode then UI.TableSetupColumn("Rep.",  col_flags) end
     if show_groups and List.Group_Mode then
         UI.TableSetupColumn("Exp.", col_flags)
         UI.TableSetupColumn("Del.", col_flags)
@@ -123,9 +123,9 @@ end
 List.Rows = function(name, timer, color, show_groups, group, collapsed)
     UI.TableNextRow()
     UI.TableNextColumn() List.Buttons.Delete_Timer(name)
-    if List.Report_Mode then UI.TableNextColumn() UI.Button(" R ") end
     UI.TableNextColumn() UI.Text(tostring(name))
     UI.TableNextColumn() UI.TextColored(color, timer)
+    if List.Report_Mode then UI.TableNextColumn() UI.Button(" R ") end
     if show_groups and group and List.Group_Mode then
         UI.TableNextColumn() if not collapsed[group] then List.Buttons.Set_Group_Expansion(group) end
         if not collapsed[group] then UI.TableNextColumn() List.Buttons.Delete_Group(group) end

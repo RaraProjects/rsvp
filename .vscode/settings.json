@@ -24,6 +24,9 @@
         "ImGuiCol_TableRowBgAlt",
         "ImGuiSelectableFlags_None",
         "ImGuiInputTextFlags_CallbackCharFilter",
-        "ImGuiInputTextFlags_AllowTabInput"
+        "ImGuiInputTextFlags_AllowTabInput",
+        "ImGuiCol_Button",
+        "ImGuiCol_ButtonHovered",
+        "ImGuiCol_ButtonActive"
     ]
 }

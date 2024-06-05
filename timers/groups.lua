@@ -2,6 +2,7 @@ Timers.Groups = T{}
 
 Timers.Groups.List = T{}
 Timers.Groups.Expanded = T{}
+Timers.Groups.NO_GROUP = "@!@!@!@!@"
 
 -- --------------------------------------------------------------------------
 -- Deletes a timer group.
@@ -22,6 +23,7 @@ end
 -- --------------------------------------------------------------------------
 Timers.Groups.Get = function(name)
     if not Timers.Timers[name] then return nil end
+    if Timers.Timers[name].Group == Timers.Groups.NO_GROUP then return nil end
     return Timers.Timers[name].Group
 end
 
