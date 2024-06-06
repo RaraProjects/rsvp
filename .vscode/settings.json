@@ -28,6 +28,7 @@
         "ImGuiCol_Button",
         "ImGuiCol_ButtonHovered",
         "ImGuiCol_ButtonActive",
-        "ImGuiComboFlags_None"
+        "ImGuiComboFlags_None",
+        "ImGuiSliderFlags_None"
     ]
 }

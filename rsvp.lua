@@ -31,9 +31,14 @@ Settings = require("settings")
 UI = require("imgui")
 require("ashita._ashita")
 require("gui._window")
+require("config._config")
+require("clock._clock")
+require("rsvp_creation._rsvp_creation")
+require("rsvp_list._rsvp_list")
 require("timers._timers")
 require("file")
 require("inputs")
+require("initialization")
 
 _Globals = T{}
 _Globals.Initialized = false
@@ -44,25 +49,10 @@ RSVP = T{}
 -- Catch the screen rendering packet.
 -- ------------------------------------------------------------------------------------------------------
 ashita.events.register('d3d_present', 'present_cb', function ()
-    if not _Globals.Initialized then
-        if not Ashita.Player.Is_Logged_In() then return nil end
-
-        -- Initialize settings from file.
-        RSVP.Settings = T{
-            Clock = Settings.load(Clock.Defaults, "clock"),
-            List = Settings.load(List.Defaults, "list"),
-            Reminder = Settings.load(Reminder.Defaults, "reminder"),
-        }
-
-        Clock.Initialize()
-        List.Initialize()
-        Reminder.Initialize()
-        File.Load()
-
-        _Globals.Initialized = true
-    end
+    if not _Globals.Initialized then return nil end
+    if not Ashita.Player.Is_Logged_In() then return nil end
     Clock.Display()
-    Reminder.Display()
+    Create.Display()
     List.Display()
     Config.Display()
     Sound.Unlock_Sound()
@@ -77,26 +67,12 @@ ashita.events.register('command', 'command_cb', function (e)
     ---@diagnostic disable-next-line: undefined-field
     if table.contains({"/rsvp"}, command_args[1]) then
         local arg = command_args[2]
-        if arg == "new" then
-            Reminder.Visible = not Reminder.Visible
-        elseif arg == "clock" then
-            Clock.Visible = not Clock.Visible
-        elseif arg == "timers" or arg == "list" then
-            List.Visible = not List.Visible
-        elseif arg == "save" then
-            File.Save()
-        elseif arg == "load" then
-            File.Load()
+        if arg == "create" or arg == "make" or arg == "c" or arg == "m" then
+            Config.Toggle.Create_Window_Visibility()
+        elseif arg == "clock" or arg == "cl" then
+            Config.Toggle.Clock_Visibility()
+        elseif arg == "timers" or arg == "list" or arg == "t" or arg == "l" then
+            Config.Toggle.List_Window_Visibility()
         end
     end
-end)
-
-------------------------------------------------------------------------------------------------------
--- Save settings when the addon is unloaded.
-------------------------------------------------------------------------------------------------------
-ashita.events.register('unload', 'unload_cb', function ()
-    Settings.save("clock")
-    Settings.save("list")
-    Settings.save("reminder")
-    File.Save()
 end)

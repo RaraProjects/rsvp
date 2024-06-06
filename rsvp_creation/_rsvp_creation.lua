@@ -1,35 +1,35 @@
-Reminder = T{}
+Create = T{}
 
-Reminder.Defaults = T{
-    Width  = 700,
-    Height = 10,
+Create.Defaults = T{
     X_Pos  = 100,
     Y_Pos  = 100,
+    Visible = {true},
 }
 
-Reminder.Table_Flags = bit.bor(ImGuiSelectableFlags_None)
-Reminder.Visible = true
-require("rsvp_creation.buttons")
+Create.Table_Flags = bit.bor(ImGuiSelectableFlags_None)
 
--- ------------------------------------------------------------------------------------------------------
--- Initializes the clock window.
--- ------------------------------------------------------------------------------------------------------
-Reminder.Initialize = function()
-    UI.SetNextWindowPos({RSVP.Settings.Reminder.X_Pos, RSVP.Settings.Reminder.Y_Pos}, ImGuiCond_Always)
-    Reminder.Display()
-end
+Create.ALIAS = "create"
+Create.Scaling_Set = false
+Create.Reset_Position = true
+
+require("rsvp_creation.buttons")
 
 -- ------------------------------------------------------------------------------------------------------
 -- Show the reminder creation window.
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Display = function()
-    if Reminder.Visible then
+Create.Display = function()
+    if RSVP.Create.Visible[1] then
+        if Create.Reset_Position then
+            UI.SetNextWindowPos({RSVP.Create.X_Pos, RSVP.Create.Y_Pos}, ImGuiCond_Always)
+            Create.Reset_Position = false
+        end
         UI.PushStyleColor(ImGuiCol_WindowBg, Window.Colors.DEFAULT)
-        if UI.Begin("Reminder", true, Window.Window_Flags) then
-            RSVP.Settings.Reminder.X_Pos, RSVP.Settings.Reminder.Y_Pos = UI.GetWindowPos()
+        if UI.Begin("RSVP Creation", RSVP.Create.Visible, Window.Window_Flags) then
+            RSVP.Create.X_Pos, RSVP.Create.Y_Pos = UI.GetWindowPos()
+            Create.Set_Window_Scaling()
             if UI.BeginTabBar("Reminder Types", Window.Tab_Flags) then
-                Reminder.Create_Minute_Timer()
-                Reminder.Create_Future_Timer()
+                Create.Create_Minute_Timer()
+                Create.Create_Future_Timer()
                 UI.EndTabBar()
             end
         end
@@ -41,7 +41,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Displays screen elements to make a tiemr set for {minutes} in the future.
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Create_Minute_Timer = function()
+Create.Create_Minute_Timer = function()
     if UI.BeginTabItem("Minutes", Window.Tab_Flags) then
         UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
         local error = Timers.Validate()
@@ -49,21 +49,21 @@ Reminder.Create_Minute_Timer = function()
         UI.Separator()
 
         UI.Text("Quick Timers")
-        if UI.BeginTable("Buttons", 5, Reminder.Table_Flags) then
-            UI.TableNextColumn() Reminder.Buttons.Minute(5)
-            UI.TableNextColumn() Reminder.Buttons.Minute(7)
-            UI.TableNextColumn() Reminder.Buttons.Minute(10)
-            UI.TableNextColumn() Reminder.Buttons.Minute(15)
-            UI.TableNextColumn() Reminder.Buttons.Minute(16)
-            UI.TableNextColumn() Reminder.Buttons.Minute(30)
-            UI.TableNextColumn() Reminder.Buttons.Minute(60)
+        if UI.BeginTable("Buttons", 5, Create.Table_Flags) then
+            UI.TableNextColumn() Create.Buttons.Minute(5)
+            UI.TableNextColumn() Create.Buttons.Minute(7)
+            UI.TableNextColumn() Create.Buttons.Minute(10)
+            UI.TableNextColumn() Create.Buttons.Minute(15)
+            UI.TableNextColumn() Create.Buttons.Minute(16)
+            UI.TableNextColumn() Create.Buttons.Minute(30)
+            UI.TableNextColumn() Create.Buttons.Minute(60)
             UI.EndTable()
         end
         UI.Separator()
 
         UI.Text("Custom Timers")
         UI.SetNextItemWidth(50) UI.InputText("Minutes", Inputs.Buffers.Minutes, 4)
-        UI.SameLine() UI.Text(" ") UI.SameLine() Reminder.Buttons.Minute(tonumber(Inputs.Buffers.Minutes[1]), "Create")
+        UI.SameLine() UI.Text(" ") UI.SameLine() Create.Buttons.Minute(tonumber(Inputs.Buffers.Minutes[1]), "Create")
         UI.EndTabItem()
     end
 end
@@ -71,7 +71,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Displays screen elements to make a timer set for a specific time in the future.
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Create_Future_Timer = function()
+Create.Create_Future_Timer = function()
     if UI.BeginTabItem("Time", Window.Tab_Flags) then
         UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
         local error = Timers.Validate()
@@ -102,9 +102,9 @@ Reminder.Create_Future_Timer = function()
         UI.Text(date .. " " .. time)
         UI.TextColored(sim_color, sim_time)
 
-        Reminder.Buttons.Schedule()
-        UI.SameLine() Reminder.Buttons.Kings()
-        UI.SameLine() Reminder.Buttons.Wyrms()
+        Create.Buttons.Schedule()
+        UI.SameLine() Create.Buttons.Kings()
+        UI.SameLine() Create.Buttons.Wyrms()
         UI.EndTabItem()
     end
 end
@@ -112,7 +112,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Handles date input to get a final instant for the timer.
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Handle_Date_Input = function()
+Create.Handle_Date_Input = function()
     local year   = Inputs.Get_Field(Inputs.Enum.YEAR, true)
     local month  = Inputs.Get_Field(Inputs.Enum.MONTH, true)
     local day    = Inputs.Get_Field(Inputs.Enum.DAY, true)
@@ -126,4 +126,28 @@ Reminder.Handle_Date_Input = function()
     if second < 0 or second > 60 then second = 0 end
 
     return os.time{year = year, month = month, day = day, hour = hour, min = minute, sec = second}
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Returns whether the window scaling needs to be updated.
+-- ------------------------------------------------------------------------------------------------------
+Create.Is_Scaling_Set = function()
+    return Create.Scaling_Set
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Sets the window scaling update flag.
+-- ------------------------------------------------------------------------------------------------------
+Create.Set_Scaling_Flag = function(scaling)
+    Create.Scaling_Set = scaling
+end
+
+------------------------------------------------------------------------------------------------------
+-- Sets the window scaling.
+------------------------------------------------------------------------------------------------------
+Create.Set_Window_Scaling = function()
+    if not Create.Is_Scaling_Set() then
+        UI.SetWindowFontScale(Config.Get_Scale())
+        Create.Set_Scaling_Flag(true)
+    end
 end

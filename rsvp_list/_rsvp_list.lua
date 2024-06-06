@@ -1,49 +1,52 @@
 List = T{}
 
 List.Defaults = T{
-    Width  = 700,
-    Height = 10,
     X_Pos  = 100,
     Y_Pos  = 100,
+    Scale  = 1.0,
+    Visible     = {true},
+    Report_Mode = true,
+    Group_Mode  = true,
+    Decoration  = false,
 }
 
-List.Visible = true
-List.Report_Mode = false
-List.Group_Mode  = true
-
-List.Window_Flags = bit.bor(ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_AlwaysAutoResize,
+List.Window_Flags = bit.bor(ImGuiWindowFlags_AlwaysAutoResize,
 ImGuiWindowFlags_NoSavedSettings, ImGuiWindowFlags_NoFocusOnAppearing,
 ImGuiWindowFlags_NoNav, ImGuiWindowFlags_NoBackground)
 
 List.Table_Flags = bit.bor(ImGuiTableFlags_Borders, ImGuiTableFlags_RowBg)
 
+List.ALIAS = "list"
+List.Scaling_Set = false
+List.Reset_Position = true
+
 require("rsvp_list.buttons")
 require("rsvp_list.publishing")
-
--- ------------------------------------------------------------------------------------------------------
--- Initializes the clock window.
--- ------------------------------------------------------------------------------------------------------
-List.Initialize = function()
-    UI.SetNextWindowPos({RSVP.Settings.List.X_Pos, RSVP.Settings.List.Y_Pos}, ImGuiCond_Always)
-    List.Display()
-end
 
 -- ------------------------------------------------------------------------------------------------------
 -- Show the list of reminders.
 -- ------------------------------------------------------------------------------------------------------
 List.Display = function()
-    if List.Visible then
+    if RSVP.List.Visible[1] then
         UI.PushStyleColor(ImGuiCol_TableRowBg, Window.Colors.DEFAULT)
         UI.PushStyleColor(ImGuiCol_TableRowBgAlt, Window.Colors.DEFAULT)
 
-        if UI.Begin("List", true, List.Window_Flags) then
-            RSVP.Settings.List.X_Pos, RSVP.Settings.List.Y_Pos = UI.GetWindowPos()
+        local window_flags = List.Window_Flags
+        if not RSVP.List.Decoration then window_flags = bit.bor(window_flags, ImGuiWindowFlags_NoDecoration) end
+        if List.Reset_Position then
+            UI.SetNextWindowPos({RSVP.List.X_Pos, RSVP.List.Y_Pos}, ImGuiCond_Always)
+            List.Reset_Position = false
+        end
+
+        if UI.Begin("RSVP Timer List", RSVP.List.Visible, window_flags) then
+            RSVP.List.X_Pos, RSVP.List.Y_Pos = UI.GetWindowPos()
+            List.Set_Window_Scaling()
 
             if Timers.Count > 0 then
                 local columns, show_groups = List.Columns()
 
                 List.Buttons.Mode_Buttons()
-                if List.Report_Mode then List.Publishing.Chat_Selection() end
+                if RSVP.List.Report_Mode then List.Publishing.Chat_Selection() end
                 if UI.BeginTable("List", columns, List.Table_Flags) then
                     List.Headers(show_groups)
 
@@ -72,7 +75,6 @@ List.Display = function()
 
         end
         UI.End()
-
         UI.PopStyleColor(2)
     end
 end
@@ -86,8 +88,8 @@ end
 List.Columns = function()
     local show_groups = false
     local columns = 3
-    if List.Report_Mode then columns = columns + 1 end
-    if Timers.Groups.Group_Count() > 0 and List.Group_Mode then
+    if RSVP.List.Report_Mode then columns = columns + 1 end
+    if Timers.Groups.Group_Count() > 0 and RSVP.List.Group_Mode then
         show_groups = true
         columns = columns + 2
     end
@@ -104,8 +106,8 @@ List.Headers = function(show_groups)
     UI.TableSetupColumn("Del.",  col_flags)
     UI.TableSetupColumn("Name",  col_flags)
     UI.TableSetupColumn("Time",  col_flags)
-    if List.Report_Mode then UI.TableSetupColumn("Rep.",  col_flags) end
-    if show_groups and List.Group_Mode then
+    if RSVP.List.Report_Mode then UI.TableSetupColumn("Rep.",  col_flags) end
+    if show_groups and RSVP.List.Group_Mode then
         UI.TableSetupColumn("Exp.", col_flags)
         UI.TableSetupColumn("Del.", col_flags)
     end
@@ -127,8 +129,8 @@ List.Rows = function(name, timer, color, show_groups, group, collapsed)
     UI.TableNextColumn() List.Buttons.Delete_Timer(name)
     UI.TableNextColumn() UI.Text(tostring(name))
     UI.TableNextColumn() UI.TextColored(color, timer)
-    if List.Report_Mode then UI.TableNextColumn() List.Buttons.Report_Timer(name) end
-    if show_groups and group and List.Group_Mode then
+    if RSVP.List.Report_Mode then UI.TableNextColumn() List.Buttons.Report_Timer(name) end
+    if show_groups and group and RSVP.List.Group_Mode then
         UI.TableNextColumn() if not collapsed[group] then List.Buttons.Set_Group_Expansion(group) end
         if not collapsed[group] then UI.TableNextColumn() List.Buttons.Delete_Group(group) end
     end
@@ -150,4 +152,28 @@ List.Timer_Color = function(name)
         if time < 15 then color = Window.Colors.YELLOW end
     end
     return timer, color
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Returns whether the window scaling needs to be updated.
+-- ------------------------------------------------------------------------------------------------------
+List.Is_Scaling_Set = function()
+    return List.Scaling_Set
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Sets the window scaling update flag.
+-- ------------------------------------------------------------------------------------------------------
+List.Set_Scaling_Flag = function(scaling)
+    List.Scaling_Set = scaling
+end
+
+------------------------------------------------------------------------------------------------------
+-- Sets the window scaling.
+------------------------------------------------------------------------------------------------------
+List.Set_Window_Scaling = function()
+    if not List.Is_Scaling_Set() then
+        UI.SetWindowFontScale(Config.Get_Scale())
+        List.Set_Scaling_Flag(true)
+    end
 end

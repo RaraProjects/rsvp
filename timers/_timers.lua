@@ -3,7 +3,6 @@ Timers = T{}
 Timers.Timers = T{}
 Timers.Sorted = T{}
 Timers.Count = 0
-require("timers.groups")
 
 Timers.Errors = T{
     NO_ERROR = "No Error",
@@ -11,6 +10,8 @@ Timers.Errors = T{
     NO_NAME  = "Name is required.",
     EXISTS   = "Timer already exists.",
 }
+
+require("timers.groups")
 
 -- --------------------------------------------------------------------------
 -- Start the timer.
@@ -115,7 +116,13 @@ Timers.Check = function(name, countdown)
             duration = now - anchor_time
         end
 
-        if duration == 0 then Sound.Play_Sound() end
+        if not negative_time and Config.Warning_Sound() then
+            if duration == Config.Get_Warning_Sound_Time() then Sound.Play_Sound(Sound.WARNING) end
+        end
+
+        if duration == 0 then
+            Sound.Play_Sound(Sound.ALERT)
+        end
 
         return Timers.Format(duration, negative_time)
     end
@@ -148,7 +155,7 @@ end
 ---@return string, string
 -- --------------------------------------------------------------------------
 Timers.Simulate = function()
-    local time = Reminder.Handle_Date_Input() - os.time()
+    local time = Create.Handle_Date_Input() - os.time()
     local negative = false
     if time < 0 then negative = true end
 

@@ -69,12 +69,12 @@ end
 -- Shows the toggle delete button.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Toggle_Group_Mode = function()
-    if UI.Button("Group Mode") then List.Group_Mode = not List.Group_Mode end
+    if UI.Button("Group Mode") then RSVP.List.Group_Mode = not RSVP.List.Group_Mode end
 end
 
 -- ------------------------------------------------------------------------------------------------------
 -- Shows the enable report button.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Toggle_Report_Mode = function()
-    if UI.Button("Report Mode") then List.Report_Mode = not List.Report_Mode end
+    if UI.Button("Report Mode") then RSVP.List.Report_Mode = not RSVP.List.Report_Mode end
 end

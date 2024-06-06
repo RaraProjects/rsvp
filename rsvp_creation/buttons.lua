@@ -1,4 +1,4 @@
-Reminder.Buttons = T{}
+Create.Buttons = T{}
 
 -- ------------------------------------------------------------------------------------------------------
 -- Create a quick button to set a reminder {minutes} into the future.
@@ -6,7 +6,7 @@ Reminder.Buttons = T{}
 ---@param minutes? number number of minutes in the future to set the timer.
 ---@param caption? string name of the button the user will click to create this timer (quick button).
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Buttons.Minute = function(minutes, caption)
+Create.Buttons.Minute = function(minutes, caption)
     local inactive = false
     local error = Timers.Validate()
     if error ~= Timers.Errors.NO_ERROR then inactive = true end
@@ -31,7 +31,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Create a quick button to set a reminder {minutes} into the future.
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Buttons.Schedule = function()
+Create.Buttons.Schedule = function()
     local inactive = false
     local error = Timers.Validate()
     if error ~= Timers.Errors.NO_ERROR then inactive = true end
@@ -43,7 +43,7 @@ Reminder.Buttons.Schedule = function()
     end
     if UI.Button("Create") then
         local timer_name = Inputs.Name()
-        local new_instant = Reminder.Handle_Date_Input()
+        local new_instant = Create.Handle_Date_Input()
         local future_minutes = (new_instant - os.time()) / 60
         if not inactive then Timers.Start(timer_name, future_minutes) end
     end
@@ -53,7 +53,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Create a seven alerts 10 minutes apart from the start time.
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Buttons.Kings = function()
+Create.Buttons.Kings = function()
     local inactive = false
     local error = Timers.Validate()
     if error ~= Timers.Errors.NO_ERROR then inactive = true end
@@ -65,7 +65,7 @@ Reminder.Buttons.Kings = function()
     end
     if UI.Button("10M7") then
         local timer_name = Inputs.Name()
-        local start_time = Reminder.Handle_Date_Input()
+        local start_time = Create.Handle_Date_Input()
         local future_minutes = (start_time - os.time()) / 60
         for i = 0, 6, 1 do
             local name = timer_name .. " (" .. tostring(i + 1) .. "/7)"
@@ -78,7 +78,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Create a seven alerts 10 minutes apart from the start time.
 -- ------------------------------------------------------------------------------------------------------
-Reminder.Buttons.Wyrms = function()
+Create.Buttons.Wyrms = function()
     local inactive = false
     local error = Timers.Validate()
     if error ~= Timers.Errors.NO_ERROR then inactive = true end
@@ -90,7 +90,7 @@ Reminder.Buttons.Wyrms = function()
     end
     if UI.Button("1H25") then
         local timer_name = Inputs.Name()
-        local start_time = Reminder.Handle_Date_Input()
+        local start_time = Create.Handle_Date_Input()
         local future_minutes = (start_time - os.time()) / 60
         for i = 0, 24, 1 do
             local name = timer_name .. " (" .. tostring(i + 1) .. "/25)"

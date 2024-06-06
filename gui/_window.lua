@@ -1,13 +1,6 @@
 Window = T{}
 
-Window.Defaults = T{
-    Width  = 700,
-    Height = 10,
-    X_Pos  = 100,
-    Y_Pos  = 100,
-}
-
-Window.Window_Flags = bit.bor(ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_AlwaysAutoResize,
+Window.Window_Flags = bit.bor(ImGuiWindowFlags_AlwaysAutoResize,
 ImGuiWindowFlags_NoSavedSettings, ImGuiWindowFlags_NoFocusOnAppearing,
 ImGuiWindowFlags_NoNav)
 
@@ -23,8 +16,3 @@ Window.Colors = T{
     DEFAULT  = {0.18, 0.20, 0.23, 0.96},
     INACTIVE = {0.4,  0.4,  0.4,  1.0},
 }
-
-require("gui.clock")
-require("rsvp_creation._rsvp_creation")
-require("rsvp_list._rsvp_list")
-require("gui.config")
