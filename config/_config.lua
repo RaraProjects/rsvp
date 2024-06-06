@@ -47,10 +47,9 @@ Config.Help_Text = function()
     if UI.BeginTabItem("Help") then
         UI.Text("Read Me: https://github.com/RaraProjects/rsvp")
         UI.Text("Version: " .. tostring(addon.version))
-        UI.Text("Base command: /rsvp")
-
-        UI.Text("Arguments:")
         UI.Text("")
+        UI.Text("Base command: /rsvp")
+        UI.Text("Arguments:")
         if UI.BeginTable("Text Commands", 3, Config.Table_Flags) then
             UI.TableSetupColumn("Full")
             UI.TableSetupColumn("Short")
@@ -65,7 +64,7 @@ Config.Help_Text = function()
             UI.TableNextRow()
             UI.TableNextColumn() UI.Text("timers\nlist")
             UI.TableNextColumn() UI.Text("t\nl")
-            UI.TableNextColumn()
+            UI.TableNextColumn() UI.Text("Toggles timer list window visibility.")
 
             UI.TableNextRow()
             UI.TableNextColumn() UI.Text("clock")
