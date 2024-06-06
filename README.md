@@ -21,7 +21,7 @@ _Right: Timer creation window for creating minute based timers._<br>
 * 1H25: For wyrm HNMs that have a 24 hour window with one hour sub-windows for a total of 25 windows.
 
 ![image](https://github.com/RaraProjects/rsvp/assets/72292212/d9de97d5-4754-4bc3-befe-86de4efbf889)<br>
-_Expanded timer list and future scheduling timer creation options._
+_Expanded timer list and future scheduling timer creation options. Report mode is enabled._
 
 ## Grouping
 Grouped timers are collapsed by default to save space. You can expand them to delete subsequent timers individually. You can also delete the whole group easily.
