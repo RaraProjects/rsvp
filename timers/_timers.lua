@@ -116,14 +116,6 @@ Timers.Check = function(name, countdown)
             duration = now - anchor_time
         end
 
-        if not negative_time and Config.Warning_Sound() then
-            if duration == Config.Get_Warning_Sound_Time() then Sound.Play_Sound(Sound.WARNING) end
-        end
-
-        if duration == 0 then
-            Sound.Play_Sound(Sound.ALERT)
-        end
-
         return Timers.Format(duration, negative_time)
     end
     return Timers.Format()
@@ -185,15 +177,4 @@ Timers.Validate = function()
         return Timers.Errors.EXISTS
     end
     return Timers.Errors.NO_ERROR
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Reports a timer to chat.
--- ------------------------------------------------------------------------------------------------------
----@param timer_name string
--- ------------------------------------------------------------------------------------------------------
-Timers.Report = function(timer_name)
-    if not timer_name then return nil end
-    if not Timers.Timers[timer_name] then return nil end
-    Ashita.Chat.Add_To_Chat(List.Publishing.Chat_Mode.Prefix, tostring(Timers.Check(timer_name, true)))
 end

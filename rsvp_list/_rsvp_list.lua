@@ -21,7 +21,6 @@ List.Scaling_Set = false
 List.Reset_Position = true
 
 require("rsvp_list.buttons")
-require("rsvp_list.publishing")
 
 -- ------------------------------------------------------------------------------------------------------
 -- Show the list of reminders.
@@ -46,7 +45,7 @@ List.Display = function()
                 local columns, show_groups = List.Columns()
 
                 List.Buttons.Mode_Buttons()
-                if RSVP.List.Report_Mode then List.Publishing.Chat_Selection() end
+                if RSVP.List.Report_Mode then end
                 if UI.BeginTable("List", columns, List.Table_Flags) then
                     List.Headers(show_groups)
 
@@ -88,7 +87,6 @@ end
 List.Columns = function()
     local show_groups = false
     local columns = 3
-    if RSVP.List.Report_Mode then columns = columns + 1 end
     if Timers.Groups.Group_Count() > 0 and RSVP.List.Group_Mode then
         show_groups = true
         columns = columns + 2
@@ -106,7 +104,6 @@ List.Headers = function(show_groups)
     UI.TableSetupColumn("Del.",  col_flags)
     UI.TableSetupColumn("Name",  col_flags)
     UI.TableSetupColumn("Time",  col_flags)
-    if RSVP.List.Report_Mode then UI.TableSetupColumn("Rep.",  col_flags) end
     if show_groups and RSVP.List.Group_Mode then
         UI.TableSetupColumn("Exp.", col_flags)
         UI.TableSetupColumn("Del.", col_flags)
@@ -129,7 +126,6 @@ List.Rows = function(name, timer, color, show_groups, group, collapsed)
     UI.TableNextColumn() List.Buttons.Delete_Timer(name)
     UI.TableNextColumn() UI.Text(tostring(name))
     UI.TableNextColumn() UI.TextColored(color, timer)
-    if RSVP.List.Report_Mode then UI.TableNextColumn() List.Buttons.Report_Timer(name) end
     if show_groups and group and RSVP.List.Group_Mode then
         UI.TableNextColumn() if not collapsed[group] then List.Buttons.Set_Group_Expansion(group) end
         if not collapsed[group] then UI.TableNextColumn() List.Buttons.Delete_Group(group) end

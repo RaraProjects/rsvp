@@ -55,7 +55,6 @@ ashita.events.register('d3d_present', 'present_cb', function ()
     Create.Display()
     List.Display()
     Config.Display()
-    Sound.Unlock_Sound()
 end)
 
 ------------------------------------------------------------------------------------------------------

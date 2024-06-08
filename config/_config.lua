@@ -6,7 +6,6 @@ Config.Defaults = T{
     X_Pos  = 100,
     Y_Pos  = 100,
     Scale = 1.0,
-    Play_Warning_Sound = true,
 }
 
 Config.Table_Flags = bit.bor(ImGuiTableFlags_PadOuterX, ImGuiTableFlags_Borders)
@@ -15,7 +14,6 @@ Config.Draggable_Width = 100
 Config.ALIAS = "config"
 Config.Scaling_Set = false
 Config.Reset_Position = true
-Config.Warning_Sound_Time = 10
 
 -- ------------------------------------------------------------------------------------------------------
 -- Displays the configuration window.
@@ -83,7 +81,6 @@ end
 Config.Settings = function()
     if UI.BeginTabItem("Settings") then
         Config.Widget.Decoration()
-        Config.Widget.Warning_Sound()
         UI.Separator()
         Config.Widget.Set_Scale()
         UI.EndTabItem()
@@ -121,20 +118,6 @@ Config.Set_Window_Scaling = function()
     end
 end
 
-------------------------------------------------------------------------------------------------------
--- Returns whether a warning sound should be played or not.
-------------------------------------------------------------------------------------------------------
-Config.Warning_Sound = function()
-    return RSVP.Config.Play_Warning_Sound
-end
-
-------------------------------------------------------------------------------------------------------
--- Returns how much time prior to zero the warning sound should play.
-------------------------------------------------------------------------------------------------------
-Config.Get_Warning_Sound_Time = function()
-    return Config.Warning_Sound_Time
-end
-
 -- ------------------------------------------------------------------------------------------------------
 -- Sets window scaling.
 -- ------------------------------------------------------------------------------------------------------
@@ -158,15 +141,6 @@ end
 Config.Widget.Decoration = function()
     if UI.Checkbox("List Window Header", {RSVP.List.Decoration}) then
         RSVP.List.Decoration = not RSVP.List.Decoration
-    end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Toggles warning sound function.
--- ------------------------------------------------------------------------------------------------------
-Config.Widget.Warning_Sound = function()
-    if UI.Checkbox("10 Second Warning", {RSVP.Config.Play_Warning_Sound}) then
-        RSVP.Config.Play_Warning_Sound = not RSVP.Config.Play_Warning_Sound
     end
 end
 

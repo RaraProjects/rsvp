@@ -4,7 +4,7 @@ List.Buttons = T{}
 -- Displays the mode buttons at the top of the timer list.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Mode_Buttons = function()
-    List.Buttons.Toggle_Group_Mode() UI.SameLine() List.Buttons.Toggle_Report_Mode()
+    List.Buttons.Toggle_Group_Mode()
 end
 
 -- ------------------------------------------------------------------------------------------------------
@@ -16,18 +16,6 @@ List.Buttons.Delete_Timer = function(timer_name)
     if not timer_name then return nil end
     UI.PushID(timer_name)
     if UI.Button(" X ") then Timers.End(timer_name) end
-    UI.PopID()
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Creates the report timer button.
--- ------------------------------------------------------------------------------------------------------
----@param timer_name string
--- ------------------------------------------------------------------------------------------------------
-List.Buttons.Report_Timer = function(timer_name)
-    if not timer_name then return nil end
-    UI.PushID(timer_name)
-    if UI.Button(" R ") then Timers.Report(timer_name) end
     UI.PopID()
 end
 
@@ -70,11 +58,4 @@ end
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Toggle_Group_Mode = function()
     if UI.Button("Group Mode") then RSVP.List.Group_Mode = not RSVP.List.Group_Mode end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Shows the enable report button.
--- ------------------------------------------------------------------------------------------------------
-List.Buttons.Toggle_Report_Mode = function()
-    if UI.Button("Report Mode") then RSVP.List.Report_Mode = not RSVP.List.Report_Mode end
 end
