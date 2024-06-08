@@ -1,3 +1,5 @@
+_Note: Some features such as audible notifications when the timer reaches zero or chat reporting do not meet the HorizonXI addon standards and cannot be implemented with this addon._
+
 ## Features
 1. Local clock
 2. Set a timer for {X} minutes in to the future. Quick buttons are available for common times.
