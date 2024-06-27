@@ -25,7 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 addon.author = "Metra"
 addon.name = "rsvp"
-addon.version = "06.08.24.00"
+addon.version = "06.26.24.00"
 
 Settings = require("settings")
 UI = require("imgui")
@@ -66,7 +66,9 @@ ashita.events.register('command', 'command_cb', function (e)
     ---@diagnostic disable-next-line: undefined-field
     if table.contains({"/rsvp"}, command_args[1]) then
         local arg = command_args[2]
-        if arg == "create" or arg == "make" or arg == "c" or arg == "m" then
+        if not arg then
+            Config.Toggle.Config_Window_Visibility()
+        elseif arg == "create" or arg == "make" or arg == "c" or arg == "m" then
             Config.Toggle.Create_Window_Visibility()
         elseif arg == "clock" or arg == "cl" then
             Config.Toggle.Clock_Visibility()

@@ -3,39 +3,39 @@ Config.Toggle = T{}
 Config.Widget = T{}
 
 Config.Defaults = T{
-    X_Pos  = 100,
-    Y_Pos  = 100,
-    Scale = 1.0,
+    X_Pos   = 100,
+    Y_Pos   = 100,
+    Scale   = 1.0,
 }
 
 Config.Table_Flags = bit.bor(ImGuiTableFlags_PadOuterX, ImGuiTableFlags_Borders)
 
 Config.Draggable_Width = 100
-Config.ALIAS = "config"
+Config.ALIAS = "config"         -- Used for the settings file.
 Config.Scaling_Set = false
 Config.Reset_Position = true
+Config.Visible = {false}
 
 -- ------------------------------------------------------------------------------------------------------
 -- Displays the configuration window.
 -- ------------------------------------------------------------------------------------------------------
 Config.Display = function()
-    if Config.Reset_Position then
-        UI.SetNextWindowPos({RSVP.Config.X_Pos, RSVP.Config.Y_Pos}, ImGuiCond_Always)
-        Config.Reset_Position = false
-    end
-    if UI.Begin("RSVP Config", true, Window.Window_Flags) then
-        RSVP.Config.X_Pos, RSVP.Config.Y_Pos = UI.GetWindowPos()
-        Config.Set_Window_Scaling()
-
-        if UI.BeginTabBar("Settings Tabs", ImGuiTabBarFlags_None) then
-            Config.Help_Text()
-            Config.Settings()
-            UI.EndTabBar()
+    if Config.Visible[1] then
+        if Config.Reset_Position then
+            UI.SetNextWindowPos({RSVP.Config.X_Pos, RSVP.Config.Y_Pos}, ImGuiCond_Always)
+            Config.Reset_Position = false
         end
-
-        UI.End()
+        if UI.Begin("RSVP Config", Config.Visible, Window.Window_Flags) then
+            RSVP.Config.X_Pos, RSVP.Config.Y_Pos = UI.GetWindowPos()
+            Config.Set_Window_Scaling()
+            if UI.BeginTabBar("Settings Tabs", ImGuiTabBarFlags_None) then
+                Config.Help_Text()
+                Config.Settings()
+                UI.EndTabBar()
+            end
+            UI.End()
+        end
     end
-
 end
 
 -- ------------------------------------------------------------------------------------------------------
@@ -142,6 +142,13 @@ Config.Widget.Decoration = function()
     if UI.Checkbox("List Window Header", {RSVP.List.Decoration}) then
         RSVP.List.Decoration = not RSVP.List.Decoration
     end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Toggles config window visibility.
+-- ------------------------------------------------------------------------------------------------------
+Config.Toggle.Config_Window_Visibility = function()
+    Config.Visible[1] = not Config.Visible[1]
 end
 
 -- ------------------------------------------------------------------------------------------------------
