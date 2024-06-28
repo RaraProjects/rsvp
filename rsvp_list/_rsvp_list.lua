@@ -4,10 +4,12 @@ List.Defaults = T{
     X_Pos  = 100,
     Y_Pos  = 100,
     Scale  = 1.0,
-    Visible     = {true},
-    Report_Mode = true,
-    Group_Mode  = true,
-    Decoration  = false,
+    Visible      = {true},
+    Group_Mode   = true,
+    Decoration   = false,
+    Apply_Filter = true,
+    Hour_Filter  = 2,
+    Show_Countdown = true,
 }
 
 List.Window_Flags = bit.bor(ImGuiWindowFlags_AlwaysAutoResize,
@@ -45,20 +47,25 @@ List.Display = function()
                 local columns, show_groups = List.Columns()
 
                 List.Buttons.Mode_Buttons()
-                if RSVP.List.Report_Mode then end
                 if UI.BeginTable("List", columns, List.Table_Flags) then
                     List.Headers(show_groups)
 
                     local blocked = T{}
                     local collapsed = T{}
+                    local now = os.time()
                     for _, timer_data in ipairs(Timers.Sorted) do
                         local name = timer_data[1]
                         local group = Timers.Groups.Get(name)
+                        local end_time = timer_data[2]
 
-                        -- Only show the earliest timer from a timer group unless it's expanded.
-                        if not group or not blocked[group] or Timers.Groups.Is_Expanded(group) then
-                            local timer, color = List.Timer_Color(name)
-                            List.Rows(name, timer, color, show_groups, group, collapsed)
+                        local duration = end_time - now
+                        if not RSVP.List.Apply_Filter then duration = 0 end
+                        if duration < (RSVP.List.Hour_Filter * 3600) then
+                            -- Only show the earliest timer from a timer group unless it's expanded.
+                            if not group or not blocked[group] or Timers.Groups.Is_Expanded(group) then
+                                local timer, color = List.Timer_Color(name)
+                                List.Rows(name, timer, color, show_groups, group, collapsed)
+                            end
                         end
 
                         -- Block subsequent timers from the same group.
@@ -115,7 +122,7 @@ end
 -- Sets up the list table rows.
 -- ------------------------------------------------------------------------------------------------------
 ---@param name string           timer name
----@param timer string          formatted timer string
+---@param timer string|osdate   formatted timer string
 ---@param color table           timer color
 ---@param show_groups boolean   if the row involves a timer group show extra columns
 ---@param group string|nil      the name of the group (if applicable)
@@ -136,8 +143,7 @@ end
 -- Sets the timer color.
 -- ------------------------------------------------------------------------------------------------------
 ---@param name string
----@return string
----@return table
+---@return string|osdate, table
 -- ------------------------------------------------------------------------------------------------------
 List.Timer_Color = function(name)
     local timer, time, negative = Timers.Check(name, true)

@@ -81,6 +81,9 @@ end
 Config.Settings = function()
     if UI.BeginTabItem("Settings") then
         Config.Widget.Decoration()
+        Config.Widget.Countdown()
+        UI.Separator()
+        Config.Widget.Set_Hour_Filter()
         UI.Separator()
         Config.Widget.Set_Scale()
         UI.EndTabItem()
@@ -145,6 +148,28 @@ Config.Widget.Decoration = function()
 end
 
 -- ------------------------------------------------------------------------------------------------------
+-- Toggles window decoration on the Timer List.
+-- ------------------------------------------------------------------------------------------------------
+Config.Widget.Countdown = function()
+    if UI.Checkbox("Countdown Mode", {RSVP.List.Show_Countdown}) then
+        RSVP.List.Show_Countdown = not RSVP.List.Show_Countdown
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Sets window scaling.
+-- ------------------------------------------------------------------------------------------------------
+Config.Widget.Set_Hour_Filter = function()
+    local hour_filter = {[1] = RSVP.List.Hour_Filter}
+    UI.SetNextItemWidth(Config.Draggable_Width)
+    if UI.DragInt("Hour Filter", hour_filter, 0.1, 1, 48, "%d", ImGuiSliderFlags_None) then
+        if hour_filter[1] < 1 then hour_filter[1] = 1
+        elseif hour_filter[1] > 48 then hour_filter[1] = 48 end
+        RSVP.List.Hour_Filter = hour_filter[1]
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
 -- Toggles config window visibility.
 -- ------------------------------------------------------------------------------------------------------
 Config.Toggle.Config_Window_Visibility = function()
@@ -177,4 +202,11 @@ end
 -- ------------------------------------------------------------------------------------------------------
 Config.Toggle.Decoration = function()
 
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Toggles showing the countdown.
+-- ------------------------------------------------------------------------------------------------------
+Config.Toggle.Countdown = function()
+    RSVP.List.Show_Countdown = not RSVP.List.Show_Countdown
 end

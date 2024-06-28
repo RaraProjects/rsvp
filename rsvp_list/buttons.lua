@@ -5,6 +5,8 @@ List.Buttons = T{}
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Mode_Buttons = function()
     List.Buttons.Toggle_Group_Mode()
+    UI.SameLine() List.Buttons.Toggle_Timestamp()
+    UI.SameLine() List.Buttons.Toggle_Filter()
 end
 
 -- ------------------------------------------------------------------------------------------------------
@@ -54,8 +56,26 @@ List.Buttons.Delete_Group = function(group)
 end
 
 -- ------------------------------------------------------------------------------------------------------
--- Shows the toggle delete button.
+-- Shows the toggle group mode button.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Toggle_Group_Mode = function()
-    if UI.Button("Group Mode") then RSVP.List.Group_Mode = not RSVP.List.Group_Mode end
+    if UI.SmallButton("Group") then RSVP.List.Group_Mode = not RSVP.List.Group_Mode end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Shows the toggle timestamp button.
+-- ------------------------------------------------------------------------------------------------------
+List.Buttons.Toggle_Timestamp = function()
+    local caption = "Countdown"
+    if RSVP.List.Show_Countdown then caption = "Timestamp" end
+    if UI.SmallButton(caption) then RSVP.List.Show_Countdown = not RSVP.List.Show_Countdown end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Shows the toggle filter button.
+-- ------------------------------------------------------------------------------------------------------
+List.Buttons.Toggle_Filter = function()
+    local caption = "Filter: OFF"
+    if RSVP.List.Apply_Filter then caption = "Filter: ON" end
+    if UI.SmallButton(caption) then RSVP.List.Apply_Filter = not RSVP.List.Apply_Filter end
 end

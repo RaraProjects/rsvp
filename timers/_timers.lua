@@ -95,15 +95,16 @@ end
 -- --------------------------------------------------------------------------
 ---@param name string name of the timer to check.
 ---@param countdown? boolean true: count down; false: count up
----@return string
+---@return string|osdate, number?, boolean?
 -- --------------------------------------------------------------------------
 Timers.Check = function(name, countdown)
     if Timers.Timers[name] then
+        if not RSVP.List.Show_Countdown then return Timers.Timestamp(name) end
+
         local now = os.time()
         local anchor_time = os.time()
         local duration = 0
         local negative_time = false
-
         if countdown then
             anchor_time = Timers.Timers[name].End
             duration = anchor_time - now
@@ -118,7 +119,7 @@ Timers.Check = function(name, countdown)
 
         return Timers.Format(duration, negative_time)
     end
-    return Timers.Format()
+    return Timers.Format()  -- 00:00
 end
 
 -- --------------------------------------------------------------------------
@@ -139,6 +140,18 @@ Timers.Format = function(time, negative_time)
 
     if hour and tonumber(hour) > 99 then return "LONG", time, negative_time end
     return sign .. hour .. ":" .. minute .. ":" .. second, time, negative_time
+end
+
+-- --------------------------------------------------------------------------
+-- Returns the timer's end time for display.
+-- Assumes that the timer exists.
+-- --------------------------------------------------------------------------
+---@param name string
+---@return string|osdate, integer, boolean
+-- --------------------------------------------------------------------------
+Timers.Timestamp = function(name)
+    local end_time = Timers.Timers[name].End
+    return os.date("%H:%M:%S", end_time), 999, false
 end
 
 -- --------------------------------------------------------------------------
