@@ -91,7 +91,6 @@ end
 -- --------------------------------------------------------------------------
 -- Check the timer.
 -- If the time is a countdown then start counting up after the end time passes.
--- Play a sound when the timer reaches zero.
 -- --------------------------------------------------------------------------
 ---@param name string name of the timer to check.
 ---@param countdown? boolean true: count down; false: count up

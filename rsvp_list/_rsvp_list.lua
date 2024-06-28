@@ -4,12 +4,14 @@ List.Defaults = T{
     X_Pos  = 100,
     Y_Pos  = 100,
     Scale  = 1.0,
-    Visible      = {true},
-    Group_Mode   = true,
-    Decoration   = false,
-    Apply_Filter = true,
-    Hour_Filter  = 2,
-    Show_Countdown = true,
+    Visible          = {true},
+    Group_Mode       = true,
+    Decoration       = false,
+    Apply_Filter     = true,
+    Hour_Filter      = 2,
+    Show_Countdown   = true,
+    Auto_Clear       = false,
+    Auto_Clear_Delay = 30,
 }
 
 List.Window_Flags = bit.bor(ImGuiWindowFlags_AlwaysAutoResize,
@@ -59,7 +61,9 @@ List.Display = function()
                         local end_time = timer_data[2]
 
                         local duration = end_time - now
+                        if RSVP.List.Auto_Clear and duration < (RSVP.List.Auto_Clear_Delay * -1) then Timers.End(name) end
                         if not RSVP.List.Apply_Filter then duration = 0 end
+
                         if duration < (RSVP.List.Hour_Filter * 3600) then
                             -- Only show the earliest timer from a timer group unless it's expanded.
                             if not group or not blocked[group] or Timers.Groups.Is_Expanded(group) then

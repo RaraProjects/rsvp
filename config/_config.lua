@@ -83,6 +83,9 @@ Config.Settings = function()
         Config.Widget.Decoration()
         Config.Widget.Countdown()
         UI.Separator()
+        Config.Widget.Auto_Clear()
+        if RSVP.List.Auto_Clear then Config.Widget.Auto_Clear_Delay() end
+        UI.Separator()
         Config.Widget.Set_Hour_Filter()
         UI.Separator()
         Config.Widget.Set_Scale()
@@ -148,7 +151,7 @@ Config.Widget.Decoration = function()
 end
 
 -- ------------------------------------------------------------------------------------------------------
--- Toggles window decoration on the Timer List.
+-- Toggles countdown on the Timer List.
 -- ------------------------------------------------------------------------------------------------------
 Config.Widget.Countdown = function()
     if UI.Checkbox("Countdown Mode", {RSVP.List.Show_Countdown}) then
@@ -157,7 +160,7 @@ Config.Widget.Countdown = function()
 end
 
 -- ------------------------------------------------------------------------------------------------------
--- Sets window scaling.
+-- Sets the hour filter value.
 -- ------------------------------------------------------------------------------------------------------
 Config.Widget.Set_Hour_Filter = function()
     local hour_filter = {[1] = RSVP.List.Hour_Filter}
@@ -166,6 +169,28 @@ Config.Widget.Set_Hour_Filter = function()
         if hour_filter[1] < 1 then hour_filter[1] = 1
         elseif hour_filter[1] > 48 then hour_filter[1] = 48 end
         RSVP.List.Hour_Filter = hour_filter[1]
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Toggles auto clear on the Timer List.
+-- ------------------------------------------------------------------------------------------------------
+Config.Widget.Auto_Clear = function()
+    if UI.Checkbox("Auto Clear", {RSVP.List.Auto_Clear}) then
+        RSVP.List.Auto_Clear = not RSVP.List.Auto_Clear
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Sets the auto clear delay.
+-- ------------------------------------------------------------------------------------------------------
+Config.Widget.Auto_Clear_Delay = function()
+    local delay = {[1] = RSVP.List.Auto_Clear_Delay}
+    UI.SetNextItemWidth(Config.Draggable_Width)
+    if UI.DragInt("Seconds", delay, 0.1, 0, 60, "%d", ImGuiSliderFlags_None) then
+        if delay[1] < 0 then delay[1] = 0
+        elseif delay[1] > 60 then delay[1] = 60 end
+        RSVP.List.Auto_Clear_Delay = delay[1]
     end
 end
 
