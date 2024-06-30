@@ -1,10 +1,18 @@
 List.Buttons = T{}
 
 -- ------------------------------------------------------------------------------------------------------
+-- Displays a create new button.
+-- ------------------------------------------------------------------------------------------------------
+List.Buttons.Create_New = function()
+    if UI.SmallButton(" + ") then Config.Toggle.Create_Window_Visibility() end
+end
+
+-- ------------------------------------------------------------------------------------------------------
 -- Displays the mode buttons at the top of the timer list.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Mode_Buttons = function()
-    List.Buttons.Toggle_Group_Mode()
+    List.Buttons.Create_New()
+    UI.SameLine() List.Buttons.Toggle_Group_Mode()
     UI.SameLine() List.Buttons.Toggle_Timestamp()
     UI.SameLine() List.Buttons.Toggle_Filter()
 end
@@ -66,8 +74,8 @@ end
 -- Shows the toggle timestamp button.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Toggle_Timestamp = function()
-    local caption = "Countdown"
-    if RSVP.List.Show_Countdown then caption = "Timestamp" end
+    local caption = "Timer"
+    if RSVP.List.Show_Countdown then caption = "Stamp" end
     if UI.SmallButton(caption) then RSVP.List.Show_Countdown = not RSVP.List.Show_Countdown end
 end
 
@@ -75,7 +83,8 @@ end
 -- Shows the toggle filter button.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Toggle_Filter = function()
-    local caption = "Filter: OFF"
-    if RSVP.List.Apply_Filter then caption = "Filter: ON" end
+    local caption = "Filt: OFF"
+    if RSVP.List.Apply_Filter then caption = "Filt: (" .. tostring(List.Filtered) .. ")" end
+    UI.PushID("Filter")
     if UI.SmallButton(caption) then RSVP.List.Apply_Filter = not RSVP.List.Apply_Filter end
 end

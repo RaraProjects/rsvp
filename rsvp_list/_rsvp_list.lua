@@ -21,6 +21,7 @@ ImGuiWindowFlags_NoNav, ImGuiWindowFlags_NoBackground)
 List.Table_Flags = bit.bor(ImGuiTableFlags_Borders, ImGuiTableFlags_RowBg)
 
 List.ALIAS = "list"
+List.Filtered = 0
 List.Scaling_Set = false
 List.Reset_Position = true
 
@@ -44,32 +45,38 @@ List.Display = function()
         if UI.Begin("RSVP Timer List", RSVP.List.Visible, window_flags) then
             RSVP.List.X_Pos, RSVP.List.Y_Pos = UI.GetWindowPos()
             List.Set_Window_Scaling()
+            local filtered_timers = 0
 
+            List.Buttons.Mode_Buttons()
             if Timers.Count > 0 then
                 local columns, show_groups = List.Columns()
+                local shown_timers = 0
 
-                List.Buttons.Mode_Buttons()
                 if UI.BeginTable("List", columns, List.Table_Flags) then
-                    List.Headers(show_groups)
-
+                    List.Table_Headers(show_groups)
                     local blocked = T{}
                     local collapsed = T{}
                     local now = os.time()
+
                     for _, timer_data in ipairs(Timers.Sorted) do
                         local name = timer_data[1]
                         local group = Timers.Groups.Get(name)
-                        local end_time = timer_data[2]
 
+                        -- Filter and auto-clear setup.
+                        local end_time = timer_data[2]
                         local duration = end_time - now
                         if RSVP.List.Auto_Clear and duration < (RSVP.List.Auto_Clear_Delay * -1) then Timers.End(name) end
-                        if not RSVP.List.Apply_Filter then duration = 0 end
+                        if not RSVP.List.Apply_Filter then duration = 0 end -- Show everything.
 
+                        -- Only show the earliest timer from a timer group (unless it's expanded) within filter time.
                         if duration < (RSVP.List.Hour_Filter * 3600) then
-                            -- Only show the earliest timer from a timer group unless it's expanded.
                             if not group or not blocked[group] or Timers.Groups.Is_Expanded(group) then
+                                shown_timers = shown_timers + 1
                                 local timer, color = List.Timer_Color(name)
-                                List.Rows(name, timer, color, show_groups, group, collapsed)
+                                List.Table_Rows(name, timer, color, show_groups, group, collapsed)
                             end
+                        else
+                            if not group or (group and not blocked[group]) then filtered_timers = filtered_timers + 1 end
                         end
 
                         -- Block subsequent timers from the same group.
@@ -78,11 +85,13 @@ List.Display = function()
                             collapsed[group] = true
                         end
                     end
-
                     UI.EndTable()
+                    if shown_timers == 0 then UI.Text("No timers to show.") end
                 end
+                List.Filtered = filtered_timers
+            else
+                UI.Text("No timers set.")
             end
-
         end
         UI.End()
         UI.PopStyleColor(2)
@@ -110,7 +119,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 ---@param show_groups boolean
 -- ------------------------------------------------------------------------------------------------------
-List.Headers = function(show_groups)
+List.Table_Headers = function(show_groups)
     local col_flags = bit.bor(ImGuiTableColumnFlags_None)
     UI.TableSetupColumn("Del.",  col_flags)
     UI.TableSetupColumn("Name",  col_flags)
@@ -132,7 +141,7 @@ end
 ---@param group string|nil      the name of the group (if applicable)
 ---@param collapsed table       tracks which groups are collapsed/expanded
 -- ------------------------------------------------------------------------------------------------------
-List.Rows = function(name, timer, color, show_groups, group, collapsed)
+List.Table_Rows = function(name, timer, color, show_groups, group, collapsed)
     UI.TableNextRow()
     UI.TableNextColumn() List.Buttons.Delete_Timer(name)
     UI.TableNextColumn() UI.Text(tostring(name))
