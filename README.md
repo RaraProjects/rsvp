@@ -1,6 +1,6 @@
 _Note: Some features such as audible notifications when the timer reaches zero or chat reporting do not meet the HorizonXI addon standards and cannot be implemented with this addon._
 
-This addon is currently in the Horizon approval process. It is NOT Horizon approved yet.
+This is an approved Horizon addon (06/26/24 addonreq-0604).
 
 ## Features
 1. Local clock
