@@ -29,6 +29,9 @@
         "ImGuiCol_ButtonHovered",
         "ImGuiCol_ButtonActive",
         "ImGuiComboFlags_None",
-        "ImGuiSliderFlags_None"
+        "ImGuiSliderFlags_None",
+        "ImGuiConfigFlags_NavEnableKeyboard",
+        "ImGuiInputTextFlags_AutoSelectAll",
+        "ImGuiInputTextFlags_None"
     ]
 }

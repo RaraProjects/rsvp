@@ -7,8 +7,8 @@ Timers.Count = 0
 Timers.Errors = T{
     NO_ERROR = "No Error",
     ERROR    = "Error",
-    NO_NAME  = "Name is required.",
-    EXISTS   = "Timer already exists.",
+    NO_NAME  = "Name Required",
+    EXISTS   = "Already Exists",
 }
 
 require("timers.groups")
@@ -185,7 +185,7 @@ Timers.Validate = function()
         return Timers.Errors.ERROR
     elseif string.len(timer_name) == 0 then
         return Timers.Errors.NO_NAME
-    elseif Timers.Timers[timer_name] then
+    elseif Timers.Timers[timer_name] or Timers.Groups.Exists(timer_name) then
         return Timers.Errors.EXISTS
     end
     return Timers.Errors.NO_ERROR

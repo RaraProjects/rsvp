@@ -42,13 +42,11 @@ end
 -- Displays screen elements to make a tiemr set for {minutes} in the future.
 -- ------------------------------------------------------------------------------------------------------
 Create.Create_Minute_Timer = function()
-    if UI.BeginTabItem("Minutes", Window.Tab_Flags) then
+    if UI.BeginTabItem("Relative", Window.Tab_Flags) then
         UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
-        local error = Timers.Validate()
-        if error ~= Timers.Errors.NO_ERROR then UI.TextColored(Window.Colors.RED, error) end
         UI.Separator()
 
-        UI.Text("Quick Timers")
+        UI.Text("Minute Presets")
         if UI.BeginTable("Buttons", 5, Create.Table_Flags) then
             UI.TableNextColumn() Create.Buttons.Minute(5)
             UI.TableNextColumn() Create.Buttons.Minute(7)
@@ -60,10 +58,10 @@ Create.Create_Minute_Timer = function()
             UI.EndTable()
         end
         UI.Separator()
-
-        UI.Text("Custom Timers")
         UI.SetNextItemWidth(50) UI.InputText("Minutes", Inputs.Buffers.Minutes, 4)
-        UI.SameLine() UI.Text(" ") UI.SameLine() Create.Buttons.Minute(tonumber(Inputs.Buffers.Minutes[1]), "Create")
+        UI.SameLine() Create.Buttons.Minute(tonumber(Inputs.Buffers.Minutes[1]), "Create")
+        local error = Timers.Validate()
+        if error ~= Timers.Errors.NO_ERROR then UI.TextColored(Window.Colors.RED, error) end
         UI.EndTabItem()
     end
 end
@@ -72,20 +70,20 @@ end
 -- Displays screen elements to make a timer set for a specific time in the future.
 -- ------------------------------------------------------------------------------------------------------
 Create.Create_Future_Timer = function()
-    if UI.BeginTabItem("Time", Window.Tab_Flags) then
+    if UI.BeginTabItem("Specific", Window.Tab_Flags) then
         UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
-        local error = Timers.Validate()
-        if error ~= Timers.Errors.NO_ERROR then UI.TextColored(Window.Colors.RED, error) end
+        UI.Separator()
         UI.Separator()
 
+        UI.Text("24-HR Format")
         Inputs.Set_Hour()
-        Inputs.Set_Minute()
-        Inputs.Set_Second()
+        UI.SameLine() Inputs.Set_Minute()
+        UI.SameLine() Inputs.Set_Second()
         UI.Separator()
 
-        Inputs.Set_Year()
         Inputs.Set_Month()
-        Inputs.Set_Day()
+        UI.SameLine() Inputs.Set_Day()
+        UI.SameLine() Inputs.Set_Year()
         UI.Separator()
 
         local year   = string.format("%04d", Inputs.Get_Field(Inputs.Enum.YEAR, true))
@@ -98,9 +96,18 @@ Create.Create_Future_Timer = function()
         local time = hour .. ":" .. minute .. ":" .. second
         local sim_time, sim_color = Timers.Simulate()
 
-        UI.Text("Schedule Preview")
-        UI.Text(date .. " " .. time)
-        UI.TextColored(sim_color, sim_time)
+        UI.Text("Preview")
+        UI.Text("Name:") UI.SameLine()
+        local error = Timers.Validate()
+        if error ~= Timers.Errors.NO_ERROR then
+            UI.TextColored(Window.Colors.RED, error)
+        else
+            UI.Text(Inputs.Name())
+        end
+        UI.Text("Date: " .. tostring(date))
+        UI.Text("Time: " .. tostring(time))
+        UI.Text("Sim :") UI.SameLine() UI.TextColored(sim_color, sim_time)
+        UI.Separator()
 
         Create.Buttons.Schedule()
         UI.SameLine() Create.Buttons.Kings()

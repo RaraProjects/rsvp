@@ -3,6 +3,7 @@ Inputs = T{}
 Inputs.Enum = T{
     ASCII_DEC_START = 48,
     ASCII_DEC_END   = 57,
+    ASCII_TAB       = 9,
     NAME   = "Name",
     YEAR   = "Year",
     MONTH  = "Month",
@@ -25,7 +26,7 @@ Inputs.Buffers = T{
     Second  = T{[1] = tostring(0)},
 }
 
-Inputs.Text_Flags = bit.bor(ImGuiInputTextFlags_CallbackCharFilter)
+Inputs.Text_Flags = bit.bor(ImGuiInputTextFlags_CallbackCharFilter, ImGuiInputTextFlags_AutoSelectAll)
 
 -- ------------------------------------------------------------------------------------------------------
 -- Catch the screen rendering packet.
@@ -75,7 +76,7 @@ end
 -- Provides the prompt to set the year field.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Set_Year = function()
-    UI.SetNextItemWidth(50) UI.InputText("Year   (YYYY)", Inputs.Buffers.Year,  5, Inputs.Text_Flags, Inputs.Number_Filter)
+    UI.SetNextItemWidth(50) UI.InputText("Y", Inputs.Buffers.Year, 5, Inputs.Text_Flags, Inputs.Number_Filter)
     local year = Inputs.Trim_String(Inputs.Buffers.Year[1])
     if string.len(year) < 4 then
         Inputs.Buffers.Year[1] = tostring(os.date("*t", os.time()).year)
@@ -90,7 +91,8 @@ end
 -- Provides the prompt to set the month field.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Set_Month = function()
-    UI.SetNextItemWidth(50) UI.InputText("Month  (1-12)", Inputs.Buffers.Month, 3, Inputs.Text_Flags, Inputs.Number_Filter)
+    UI.PushID("Month")
+    UI.SetNextItemWidth(50) UI.InputText("M", Inputs.Buffers.Month, 3, Inputs.Text_Flags, Inputs.Number_Filter)
     local month = Inputs.Trim_String(Inputs.Buffers.Month[1])
     if string.len(month) == 0 then
         Inputs.Buffers.Month[1] = tostring(os.date("*t", os.time()).month)
@@ -105,7 +107,7 @@ end
 -- Provides the prompt to set the day field.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Set_Day = function()
-    UI.SetNextItemWidth(50) UI.InputText("Day    (1-31)", Inputs.Buffers.Day,   3, ImGuiInputTextFlags_CallbackCharFilter, Inputs.Number_Filter)
+    UI.SetNextItemWidth(50) UI.InputText("D", Inputs.Buffers.Day, 3, Inputs.Text_Flags, Inputs.Number_Filter)
     local day = Inputs.Trim_String(Inputs.Buffers.Day[1])
     if string.len(day) == 0 then
         Inputs.Buffers.Day[1] = tostring(os.date("*t", os.time()).day)
@@ -120,7 +122,7 @@ end
 -- Provides the prompt to set the hour field.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Set_Hour = function()
-    UI.SetNextItemWidth(50) UI.InputText("Hour   (0-23)", Inputs.Buffers.Hour,   3, ImGuiInputTextFlags_CallbackCharFilter, Inputs.Number_Filter)
+    UI.SetNextItemWidth(50) UI.InputText("H", Inputs.Buffers.Hour, 3, Inputs.Text_Flags, Inputs.Number_Filter)
     local hour = Inputs.Trim_String(Inputs.Buffers.Hour[1])
     if string.len(hour) == 0 then
         Inputs.Buffers.Hour[1] = tostring(0)
@@ -133,7 +135,8 @@ end
 -- Provides the prompt to set the minute field.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Set_Minute = function()
-    UI.SetNextItemWidth(50) UI.InputText("Minute (0-59)", Inputs.Buffers.Minute, 3, ImGuiInputTextFlags_CallbackCharFilter, Inputs.Number_Filter)
+    UI.PushID("Minute")
+    UI.SetNextItemWidth(50) UI.InputText("M", Inputs.Buffers.Minute, 3, Inputs.Text_Flags, Inputs.Number_Filter)
     local minute = Inputs.Trim_String(Inputs.Buffers.Minute[1])
     if string.len(minute) == 0 then
         Inputs.Buffers.Minute[1] = tostring(0)
@@ -145,7 +148,7 @@ end
 -- Provides the prompt to set the second field.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Set_Second = function()
-    UI.SetNextItemWidth(50) UI.InputText("Second (0-59)", Inputs.Buffers.Second, 3, ImGuiInputTextFlags_CallbackCharFilter, Inputs.Number_Filter)
+    UI.SetNextItemWidth(50) UI.InputText("S", Inputs.Buffers.Second, 3, Inputs.Text_Flags, Inputs.Number_Filter)
     local second = Inputs.Trim_String(Inputs.Buffers.Second[1])
     if string.len(second) == 0 then
         Inputs.Buffers.Second[1] = tostring(0)
