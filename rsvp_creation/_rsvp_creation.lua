@@ -43,7 +43,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 Create.Create_Minute_Timer = function()
     if UI.BeginTabItem("Relative", Window.Tab_Flags) then
-        UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
+        UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100, ImGuiInputTextFlags_AutoSelectAll)
         UI.Separator()
 
         UI.Text("Minute Presets")
@@ -71,7 +71,7 @@ end
 -- ------------------------------------------------------------------------------------------------------
 Create.Create_Future_Timer = function()
     if UI.BeginTabItem("Specific", Window.Tab_Flags) then
-        UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100)
+        UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100, ImGuiInputTextFlags_AutoSelectAll)
         UI.Separator()
         UI.Separator()
 
