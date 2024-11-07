@@ -154,39 +154,45 @@ Timers.Timestamp = function(name)
 end
 
 -- --------------------------------------------------------------------------
+-- Creates an date table and returns a timestamp.
+-- Date and time are assumed valid.
+-- --------------------------------------------------------------------------
+---@param date table
+---@param time table
+---@return number
+-- --------------------------------------------------------------------------
+Timers.Make_Time_Table = function(date, time)
+    local time_table = {
+        year  = date.year + 2000,
+        month = date.month,
+        day   = date.day,
+        hour  = time.hour,
+        min   = time.minute,
+        sec   = time.second,
+    }
+    return os.time(time_table)
+end
+
+-- --------------------------------------------------------------------------
 -- Simulates a timer.
 -- --------------------------------------------------------------------------
+---@param date table
+---@param time table
 ---@return string, string
 -- --------------------------------------------------------------------------
-Timers.Simulate = function()
-    local time = Create.Handle_Date_Input() - os.time()
+Timers.Simulate = function(date, time)
+    local timestamp = Timers.Make_Time_Table(date, time)
+    local time_diff = timestamp - os.time()
     local negative = false
-    if time < 0 then negative = true end
+    if time_diff < 0 then negative = true end
 
+    -- Colors
     local color = Window.Colors.WHITE
     if negative then
         color = Window.Colors.RED
     else
-        if time < 15 then color = Window.Colors.YELLOW end
+        if time_diff < 15 then color = Window.Colors.YELLOW end
     end
 
-    return Timers.Format(time, negative), color
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Determines if a timer can be created or not.
--- Cannot create a timer if there isn't a name provided or a timer with same name already exists.
--- ------------------------------------------------------------------------------------------------------
----@return string
--- ------------------------------------------------------------------------------------------------------
-Timers.Validate = function()
-    local timer_name = Inputs.Name()
-    if not timer_name then
-        return Timers.Errors.ERROR
-    elseif string.len(timer_name) == 0 then
-        return Timers.Errors.NO_NAME
-    elseif Timers.Timers[timer_name] or Timers.Groups.Exists(timer_name) then
-        return Timers.Errors.EXISTS
-    end
-    return Timers.Errors.NO_ERROR
+    return Timers.Format(time_diff, negative), color
 end

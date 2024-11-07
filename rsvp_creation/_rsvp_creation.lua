@@ -28,8 +28,8 @@ Create.Display = function()
             RSVP.Create.X_Pos, RSVP.Create.Y_Pos = UI.GetWindowPos()
             Create.Set_Window_Scaling()
             if UI.BeginTabBar("Reminder Types", Window.Tab_Flags) then
-                Create.Create_Minute_Timer()
-                Create.Create_Future_Timer()
+                Create.Make_Relative_Timer()
+                Create.Make_Specific_Timer()
                 UI.EndTabBar()
             end
         end
@@ -41,27 +41,32 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Displays screen elements to make a tiemr set for {minutes} in the future.
 -- ------------------------------------------------------------------------------------------------------
-Create.Create_Minute_Timer = function()
+Create.Make_Relative_Timer = function()
     if UI.BeginTabItem("Relative", Window.Tab_Flags) then
-        UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100, ImGuiInputTextFlags_AutoSelectAll)
-        UI.Separator()
+        Inputs.Name_Field()
 
-        UI.Text("Minute Presets")
-        if UI.BeginTable("Buttons", 5, Create.Table_Flags) then
-            UI.TableNextColumn() Create.Buttons.Minute(5)
-            UI.TableNextColumn() Create.Buttons.Minute(7)
-            UI.TableNextColumn() Create.Buttons.Minute(10)
-            UI.TableNextColumn() Create.Buttons.Minute(15)
-            UI.TableNextColumn() Create.Buttons.Minute(16)
-            UI.TableNextColumn() Create.Buttons.Minute(30)
-            UI.TableNextColumn() Create.Buttons.Minute(60)
+        UI.Separator()
+        UI.Text("Presets (Minutes)")
+        if UI.BeginTable("Buttons", 4, Create.Table_Flags) then
+            UI.TableNextColumn() Create.Buttons.Minute(true, 5)
+            UI.TableNextColumn() Create.Buttons.Minute(true, 5.5)
+            UI.TableNextColumn() Create.Buttons.Minute(true, 7)
+            UI.TableNextColumn() Create.Buttons.Minute(true, 10)
+            UI.TableNextColumn() Create.Buttons.Minute(true, 15)
+            UI.TableNextColumn() Create.Buttons.Minute(true, 16)
+            UI.TableNextColumn() Create.Buttons.Minute(true, 30)
+            UI.TableNextColumn() Create.Buttons.Minute(true, 60)
             UI.EndTable()
         end
+
         UI.Separator()
-        UI.SetNextItemWidth(50) UI.InputText("Minutes", Inputs.Buffers.Minutes, 4)
-        UI.SameLine() Create.Buttons.Minute(tonumber(Inputs.Buffers.Minutes[1]), "Create")
-        local error = Timers.Validate()
-        if error ~= Timers.Errors.NO_ERROR then UI.TextColored(Window.Colors.RED, error) end
+        Inputs.Minutes_Field()
+
+        local name_pass, name_error, name = Inputs.Validate_Name(true)
+        local minute_pass, minute_error, minute = Inputs.Validate_Minutes()
+        local pass = name_pass and minute_pass
+        Create.Buttons.Minute(pass, minute, "Create")
+
         UI.EndTabItem()
     end
 end
@@ -69,70 +74,71 @@ end
 -- ------------------------------------------------------------------------------------------------------
 -- Displays screen elements to make a timer set for a specific time in the future.
 -- ------------------------------------------------------------------------------------------------------
-Create.Create_Future_Timer = function()
+Create.Make_Specific_Timer = function()
     if UI.BeginTabItem("Specific", Window.Tab_Flags) then
-        UI.SetNextItemWidth(150) UI.InputText("Name", Inputs.Buffers.Name, 100, ImGuiInputTextFlags_AutoSelectAll)
+        -- Display entry fields.
+        Inputs.Name_Field()
         UI.Separator()
+        Inputs.Time_Field()
+        Inputs.Date_Field()
+
+        -- Validate and display the name.
         UI.Separator()
-
-        UI.Text("24-HR Format")
-        Inputs.Set_Hour()
-        UI.SameLine() Inputs.Set_Minute()
-        UI.SameLine() Inputs.Set_Second()
-        UI.Separator()
-
-        Inputs.Set_Month()
-        UI.SameLine() Inputs.Set_Day()
-        UI.SameLine() Inputs.Set_Year()
-        UI.Separator()
-
-        local year   = string.format("%04d", Inputs.Get_Field(Inputs.Enum.YEAR, true))
-        local month  = string.format("%02d", Inputs.Get_Field(Inputs.Enum.MONTH, true))
-        local day    = string.format("%02d", Inputs.Get_Field(Inputs.Enum.DAY, true))
-        local hour   = string.format("%02d", Inputs.Get_Field(Inputs.Enum.HOUR, true))
-        local minute = string.format("%02d", Inputs.Get_Field(Inputs.Enum.MINUTE, true))
-        local second = string.format("%02d", Inputs.Get_Field(Inputs.Enum.SECOND, true))
-        local date = month .. "/" .. day .. "/" .. year
-        local time = hour .. ":" .. minute .. ":" .. second
-        local sim_time, sim_color = Timers.Simulate()
-
-        UI.Text("Preview")
+        UI.Text("Timer Preview")
         UI.Text("Name:") UI.SameLine()
-        local error = Timers.Validate()
-        if error ~= Timers.Errors.NO_ERROR then
-            UI.TextColored(Window.Colors.RED, error)
+        local name_pass, name_error, name = Inputs.Validate_Name()
+        if name_pass then
+            UI.Text(name)
         else
-            UI.Text(Inputs.Name())
+            UI.TextColored(Window.Colors.RED, name_error)
         end
-        UI.Text("Date: " .. tostring(date))
-        UI.Text("Time: " .. tostring(time))
-        UI.Text("Sim :") UI.SameLine() UI.TextColored(sim_color, sim_time)
-        UI.Separator()
 
-        Create.Buttons.Schedule()
-        UI.SameLine() Create.Buttons.Kings()
-        UI.SameLine() Create.Buttons.Wyrms()
+        -- Validate and display the time.
+        UI.Text("Time:") UI.SameLine()
+        local time_pass, time_error, time = Inputs.Validate_Time()
+        if time_pass then
+            local display_time = string.format("%02d", time.hour) .. ":" .. string.format("%02d", time.minute) .. ":" .. string.format("%02d", time.second) .. " " .. tostring(time.meridiem)
+            UI.Text(tostring(display_time))
+        else
+            UI.TextColored(Window.Colors.RED, time_error)
+        end
+
+        -- Validate and display the date.
+        UI.Text("Date:") UI.SameLine()
+        local date_pass, date_error, date = Inputs.Validate_Date()
+        if date_pass then
+            local display_date = string.format("%02d", date.month) .. "/" .. string.format("%02d", date.day) .. "/" .. string.format("%02d", date.year)
+            UI.Text(tostring(display_date))
+        else
+            UI.TextColored(Window.Colors.RED, date_error)
+        end
+
+        -- Show the timer simulation.
+        UI.Text("Sim :") UI.SameLine()
+        if time_pass and date_pass then
+            local sim_time, sim_color = Timers.Simulate(date, time)
+            UI.TextColored(sim_color, sim_time)
+        else
+            UI.Text("~--:--:--")
+        end
+
+        -- Display the creation buttons.
+        local pass = name_pass and time_pass and date_pass
+        Create.Buttons.Schedule(Create.Buttons.Type.Normal, pass, name, date, time)
+        UI.SameLine() Create.Buttons.Schedule(Create.Buttons.Type.King, pass, name, date, time)
+        UI.SameLine() Create.Buttons.Schedule(Create.Buttons.Type.Wyrm, pass, name, date, time)
+
+        -- Display custom window buttons
+        if UI.CollapsingHeader("Custom Windows") then
+            Inputs.Custom_Gap_Field()
+            Inputs.Custom_Count_Field()
+            local gap_pass, gap_error, gap = Inputs.Validate_Gap()
+            local count_pass, count_error, count = Inputs.Validate_Count()
+            Create.Buttons.Schedule(Create.Buttons.Type.Custom, gap_pass and count_pass, name, date, time, {gap = gap, count = count})
+        end
+
         UI.EndTabItem()
     end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Handles date input to get a final instant for the timer.
--- ------------------------------------------------------------------------------------------------------
-Create.Handle_Date_Input = function()
-    local year   = Inputs.Get_Field(Inputs.Enum.YEAR, true)
-    local month  = Inputs.Get_Field(Inputs.Enum.MONTH, true)
-    local day    = Inputs.Get_Field(Inputs.Enum.DAY, true)
-    local hour   = Inputs.Get_Field(Inputs.Enum.HOUR, true)
-    local minute = Inputs.Get_Field(Inputs.Enum.MINUTE, true)
-    local second = Inputs.Get_Field(Inputs.Enum.SECOND, true)
-
-    if not hour or not minute or not second then return nil end
-    if hour < 0 or hour > 24 then hour = 0 end
-    if minute < 0 or minute > 60 then minute = 0 end
-    if second < 0 or second > 60 then second = 0 end
-
-    return os.time{year = year, month = month, day = day, hour = hour, min = minute, sec = second}
 end
 
 -- ------------------------------------------------------------------------------------------------------

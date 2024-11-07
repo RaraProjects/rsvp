@@ -16,7 +16,11 @@ Inputs.Enum = T{
 }
 
 Inputs.Buffers = T{
-    Name    = T{},
+    Name         = T{},
+    Date         = T{[1] = tostring(os.date("%m/%d/%y", os.time()))},
+    Time         = T{[1] = "00:00:00 AM"},
+    Custom_Gap   = T{},
+    Custom_Count = T{},
     Minutes = T{},  -- ???
     Year    = T{[1] = tostring(os.date("*t", os.time()).year)},
     Month   = T{[1] = tostring(os.date("*t", os.time()).month)},
@@ -26,147 +30,305 @@ Inputs.Buffers = T{
     Second  = T{[1] = tostring(0)},
 }
 
+Inputs.Widths = T{}
+Inputs.Widths.Primary = 150
+Inputs.Widths.Minute = 50
+Inputs.Widths.Custom = 100
+
+Inputs.Meridiem = T{}
+Inputs.Meridiem.AM = "AM"
+Inputs.Meridiem.PM = "PM"
+
 Inputs.Text_Flags = bit.bor(ImGuiInputTextFlags_CallbackCharFilter, ImGuiInputTextFlags_AutoSelectAll)
+Inputs.Date_Time_Flags = bit.bor(ImGuiInputTextFlags_AutoSelectAll)
 
 -- ------------------------------------------------------------------------------------------------------
--- Catch the screen rendering packet.
+-- Retrieves data from the name buffer.
 -- ------------------------------------------------------------------------------------------------------
----@param input any
+Inputs.Get_Name = function()
+    return Inputs.Buffers.Name[1]
+end
+
 -- ------------------------------------------------------------------------------------------------------
-Inputs.Number_Filter = function(input)
-    if input then
-        local ascii = input.EventChar
-        if ascii >= Inputs.Enum.ASCII_DEC_START and ascii <= Inputs.Enum.ASCII_DEC_END then
-            return 0
+-- Retrieves data from the time buffer.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Get_Time = function()
+    return Inputs.Buffers.Time[1]
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Retrieves data from the date buffer.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Get_Date = function()
+    return Inputs.Buffers.Date[1]
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Retrieves data from the custom gap buffer.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Get_Custom_Gap = function()
+    return Inputs.Buffers.Custom_Gap[1]
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Retrieves data from the custom count buffer.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Get_Custom_Count = function()
+    return Inputs.Buffers.Custom_Count[1]
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Retrieves data from the minutes buffer.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Get_Minutes = function()
+    return Inputs.Buffers.Minutes[1]
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Creates the entry field for name.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Name_Field = function()
+    UI.SetNextItemWidth(Inputs.Widths.Primary) UI.InputText("Name", Inputs.Buffers.Name, 100, ImGuiInputTextFlags_AutoSelectAll)
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Creates the entry field for time.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Time_Field = function()
+    UI.SetNextItemWidth(Inputs.Widths.Primary) UI.InputText("Time", Inputs.Buffers.Time, 12, Inputs.Date_Time_Flags)
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Creates the entry field for date.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Date_Field = function()
+    UI.SetNextItemWidth(Inputs.Widths.Primary) UI.InputText("Date", Inputs.Buffers.Date, 9, Inputs.Date_Time_Flags)
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Creates the entry field for custom gap.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Custom_Gap_Field = function()
+    UI.SetNextItemWidth(Inputs.Widths.Custom) UI.InputInt("Minutes", Inputs.Buffers.Custom_Gap, 1, 5, ImGuiInputTextFlags_AutoSelectAll)
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Creates the entry field for custom count.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Custom_Count_Field = function()
+    UI.SetNextItemWidth(Inputs.Widths.Custom) UI.InputInt("# Windows", Inputs.Buffers.Custom_Count, 1, 5, ImGuiInputTextFlags_AutoSelectAll)
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Creates the entry field for minutes.
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Minutes_Field = function()
+    UI.SetNextItemWidth(Inputs.Widths.Minute) UI.InputText("Minutes", Inputs.Buffers.Minutes, 4)
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Validates name input.
+-- ------------------------------------------------------------------------------------------------------
+---@param not_required? boolean
+---@return boolean
+---@return string
+---@return string
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Validate_Name = function(not_required)
+    local default_name = "Default Name"
+    local name = Inputs.Get_Name()
+
+    if not name then
+        return false, Timers.Errors.ERROR, default_name
+    elseif not not_required and string.len(name) == 0 then
+        return false, Timers.Errors.NO_NAME, default_name
+    elseif Timers.Timers[name] or Timers.Groups.Exists(name) then
+        return false, Timers.Errors.EXISTS, default_name
+    end
+
+    return true, Timers.Errors.NO_ERROR, name
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Validates a time input.
+-- ------------------------------------------------------------------------------------------------------
+---@return boolean
+---@return string
+---@return table
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Validate_Time = function()
+    local err = ""
+    local default_time = {hour = 0, minute = 0, second = 0, meridiem = "AM"}
+
+    local time = Inputs.Get_Time()
+    if not time or time == "" then
+        err = "Time Required"
+        return false, err, default_time
+    end
+
+    local hours, minutes, seconds, meridiem = string.match(time, "(%d?%d):(%d?%d):(%d?%d)%s*(%a?%a?)")
+
+    -- If a meridian was entered then need to make sure it is valid.
+    if meridiem and meridiem ~= "" then
+        if string.lower(meridiem) == "am" then
+            meridiem = Inputs.Meridiem.AM
+        elseif string.lower(meridiem) == "pm" then
+            meridiem = Inputs.Meridiem.PM
+        else
+            err = "Invalid Time"
+            return false, err, default_time
         end
     end
-    return 1
-end
 
--- ------------------------------------------------------------------------------------------------------
--- Returns a given field.
--- ------------------------------------------------------------------------------------------------------
----@param field string
----@param make_number? boolean
----@return string|number
--- ------------------------------------------------------------------------------------------------------
-Inputs.Get_Field = function(field, make_number)
-    if not field then return "Error" end
-    if not Inputs.Buffers[field] then return "Error" end
+    -- Validate and adjust hours for AM/PM.
+    if hours and minutes and seconds then
+        hours   = tonumber(hours)
+        minutes = tonumber(minutes)
+        seconds = tonumber(seconds)
 
-    local month = Inputs.Trim_String(Inputs.Buffers[field][1])
-    if make_number then
-        local month_number = tonumber(month)
-        if not month_number then month_number = 0 end
-        return month_number
+        local hour_check   = hours   >= 0 and hours   <= 24
+        local minute_check = minutes >= 0 and minutes <= 59
+        local second_check = seconds >= 0 and seconds <= 59
+        if not (hour_check and minute_check and second_check) then
+            err = "Invalid Time"
+            return false, err, default_time
+        end
+
+        -- Hours will supercede meridiem. Meridiem only matters for values less than 13.
+        -- If AM/PM is not entered for values less than 13 then we assume miliatry time.
+        if hours == 12 then
+            if meridiem == "" then meridiem = "AM" end
+            if meridiem == "AM" then hours = hours - 12 end
+        elseif hours <= 11 then
+            if meridiem == Inputs.Meridiem.PM then
+                hours = hours + 12
+            else
+                meridiem = "AM"
+            end
+        else
+            meridiem = "PM"
+        end
+    else
+        err = "Invalid Time"
+        return false, err, default_time
     end
-    return month
+
+    return true, err, {hour = hours, minute = minutes, second = seconds, meridiem = string.upper(meridiem)}
 end
 
 -- ------------------------------------------------------------------------------------------------------
--- Returns the name field.
+-- Validates date input.
 -- ------------------------------------------------------------------------------------------------------
+---@return boolean
 ---@return string
+---@return table
 -- ------------------------------------------------------------------------------------------------------
-Inputs.Name = function()
-    return tostring(Inputs.Buffers.Name[1])
+Inputs.Validate_Date = function()
+    local err = ""
+    local now = os.time()
+    local default_date = {month = os.date("%m", now), day = os.date("%d", now), year = os.date("%y", now)}
+
+    local date = Inputs.Get_Date()
+    if not date then
+        err = "Date Required"
+        return false, err, default_date
+    end
+
+    local month, day, year = string.match(date, "^(%d?%d)[/%-](%d?%d)[/%-](%d%d)$")
+
+    if month and day and year then
+        month = tonumber(month)
+        day   = tonumber(day)
+        year  = tonumber(year)
+
+        local month_check = month >= 1 and month <= 12
+        local day_check   = day   >= 1 and day <= 31
+        if not (month_check and day_check) then
+            err = "Date Required"
+            return false, err, default_date
+        end
+    else
+        err = "Date Required"
+        return false, err, default_date
+    end
+
+    return true, err, {month = month, day = day, year = year}
 end
 
 -- ------------------------------------------------------------------------------------------------------
--- Provides the prompt to set the year field.
+-- Validates gap input.
 -- ------------------------------------------------------------------------------------------------------
-Inputs.Set_Year = function()
-    UI.SetNextItemWidth(50) UI.InputText("Y", Inputs.Buffers.Year, 5, Inputs.Text_Flags, Inputs.Number_Filter)
-    local year = Inputs.Trim_String(Inputs.Buffers.Year[1])
-    if string.len(year) < 4 then
-        Inputs.Buffers.Year[1] = tostring(os.date("*t", os.time()).year)
-    elseif tonumber(year) > Inputs.Enum.MAX_YEAR then
-        Inputs.Buffers.Year[1] = tostring(Inputs.Enum.MAX_YEAR)
-    elseif tonumber(year) < Inputs.Enum.MIN_YEAR then
-        Inputs.Buffers.Year[1] = tostring(Inputs.Enum.MIN_YEAR)
-    end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Provides the prompt to set the month field.
--- ------------------------------------------------------------------------------------------------------
-Inputs.Set_Month = function()
-    UI.PushID("Month")
-    UI.SetNextItemWidth(50) UI.InputText("M", Inputs.Buffers.Month, 3, Inputs.Text_Flags, Inputs.Number_Filter)
-    local month = Inputs.Trim_String(Inputs.Buffers.Month[1])
-    if string.len(month) == 0 then
-        Inputs.Buffers.Month[1] = tostring(os.date("*t", os.time()).month)
-    elseif tonumber(month) < 1 then
-        Inputs.Buffers.Month[1] = tostring(1)
-    elseif tonumber(month) > 12 then
-        Inputs.Buffers.Month[1] = tostring(12)
-    end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Provides the prompt to set the day field.
--- ------------------------------------------------------------------------------------------------------
-Inputs.Set_Day = function()
-    UI.SetNextItemWidth(50) UI.InputText("D", Inputs.Buffers.Day, 3, Inputs.Text_Flags, Inputs.Number_Filter)
-    local day = Inputs.Trim_String(Inputs.Buffers.Day[1])
-    if string.len(day) == 0 then
-        Inputs.Buffers.Day[1] = tostring(os.date("*t", os.time()).day)
-    elseif tonumber(day) < 1 then
-        Inputs.Buffers.Day[1] = tostring(1)
-    elseif tonumber(day) > 31 then
-        Inputs.Buffers.Day[1] = tostring(31)
-    end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Provides the prompt to set the hour field.
--- ------------------------------------------------------------------------------------------------------
-Inputs.Set_Hour = function()
-    UI.SetNextItemWidth(50) UI.InputText("H", Inputs.Buffers.Hour, 3, Inputs.Text_Flags, Inputs.Number_Filter)
-    local hour = Inputs.Trim_String(Inputs.Buffers.Hour[1])
-    if string.len(hour) == 0 then
-        Inputs.Buffers.Hour[1] = tostring(0)
-    elseif tonumber(hour) > 23 then
-        Inputs.Buffers.Hour[1] = tostring(24)
-    end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Provides the prompt to set the minute field.
--- ------------------------------------------------------------------------------------------------------
-Inputs.Set_Minute = function()
-    UI.PushID("Minute")
-    UI.SetNextItemWidth(50) UI.InputText("M", Inputs.Buffers.Minute, 3, Inputs.Text_Flags, Inputs.Number_Filter)
-    local minute = Inputs.Trim_String(Inputs.Buffers.Minute[1])
-    if string.len(minute) == 0 then
-        Inputs.Buffers.Minute[1] = tostring(0)
-    elseif tonumber(minute) > 59 then
-        Inputs.Buffers.Minute[1] = tostring(59)
-    end
-end
--- ------------------------------------------------------------------------------------------------------
--- Provides the prompt to set the second field.
--- ------------------------------------------------------------------------------------------------------
-Inputs.Set_Second = function()
-    UI.SetNextItemWidth(50) UI.InputText("S", Inputs.Buffers.Second, 3, Inputs.Text_Flags, Inputs.Number_Filter)
-    local second = Inputs.Trim_String(Inputs.Buffers.Second[1])
-    if string.len(second) == 0 then
-        Inputs.Buffers.Second[1] = tostring(0)
-    elseif tonumber(second) > 59 then
-        Inputs.Buffers.Second[1] = tostring(59)
-    end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Trims junk characters out of strings.
--- ------------------------------------------------------------------------------------------------------
----@param junk_string string
+---@return boolean
 ---@return string
+---@return integer
 -- ------------------------------------------------------------------------------------------------------
-Inputs.Trim_String = function(junk_string)
-    local trimmed = ""
-    for i in string.gmatch(junk_string, "%d") do
-        trimmed = trimmed .. tostring(i)
+Inputs.Validate_Gap = function()
+    local err = ""
+    local gap = tonumber(Inputs.Get_Custom_Gap())
+    if not gap then
+        err = "Gap Required"
+        return false, err, 0
     end
-    return trimmed
+
+    if gap <= 0 then
+        err = "Positive Gap Required"
+        return false, err, 0
+    elseif gap > 720 then
+        err = "Gap Too High"
+        return false, err, 720
+    end
+
+    return true, err, gap
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Validates gap input.
+-- ------------------------------------------------------------------------------------------------------
+---@return boolean
+---@return string
+---@return integer
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Validate_Count = function()
+    local err = ""
+    local count = tonumber(Inputs.Get_Custom_Count())
+    if not count then
+        err = "Count Required"
+        return false, err, 0
+    end
+
+    if count <= 0 then
+        err = "Positive Count Required"
+        return false, err, 0
+    elseif count > 25 then
+        err = "Gap Too High"
+        return false, err, 25
+    end
+
+    return true, err, count
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Validates minute input.
+-- ------------------------------------------------------------------------------------------------------
+---@return boolean
+---@return string
+---@return integer
+-- ------------------------------------------------------------------------------------------------------
+Inputs.Validate_Minutes = function()
+    local err = ""
+    local minutes = tonumber(Inputs.Get_Minutes())
+    if not minutes then
+        err = "Minutes Required"
+        return false, err, 0
+    end
+
+    if minutes <= 0 then
+        err = "Positive Minutes Required"
+        return false, err, 0
+    elseif minutes > 1440 then
+        err = "Gap Too High"
+        return false, err, 1440
+    end
+
+    return true, err, minutes
 end

@@ -32,6 +32,19 @@
         "ImGuiSliderFlags_None",
         "ImGuiConfigFlags_NavEnableKeyboard",
         "ImGuiInputTextFlags_AutoSelectAll",
-        "ImGuiInputTextFlags_None"
+        "ImGuiInputTextFlags_None",
+        "ImGuiTableFlags_None",
+        "ImGuiTableFlags_NoSavedSettings",
+        "ImGuiTableFlags_SizingStretchProp",
+        "ImGuiTableFlags_SizingFixedFit",
+        "ImGuiTableFlags_ScrollY",
+        "ImGuiStyleVar_Alpha",
+        "ImGuiStyleVar_CellPadding",
+        "ImGuiStyleVar_WindowPadding",
+        "ImGuiStyleVar_ItemSpacing",
+        "ImGuiStyleVar_ItemInnerSpacing",
+        "ImGuiWindowFlags_NoTitleBar",
+        "ImGuiTabItemFlags_SetSelected",
+        "ImGuiTableBgTarget_RowBg0"
     ]
 }
