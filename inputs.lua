@@ -123,7 +123,7 @@ end
 -- Creates the entry field for minutes.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Minutes_Field = function()
-    UI.SetNextItemWidth(Inputs.Widths.Minute) UI.InputText("Minutes", Inputs.Buffers.Minutes, 4)
+    UI.SetNextItemWidth(Inputs.Widths.Minute) UI.InputText("Minutes", Inputs.Buffers.Minutes, 4, ImGuiInputTextFlags_AutoSelectAll)
 end
 
 -- ------------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ Inputs.Validate_Time = function()
 
     local time = Inputs.Get_Time()
     if not time or time == "" then
-        err = "Time Required"
+        err = "{HH:MM:SS}"
         return false, err, default_time
     end
 
@@ -175,7 +175,7 @@ Inputs.Validate_Time = function()
         elseif string.lower(meridiem) == "pm" then
             meridiem = Inputs.Meridiem.PM
         else
-            err = "Invalid Time"
+            err = "{HH:MM:SS}"
             return false, err, default_time
         end
     end
@@ -190,7 +190,7 @@ Inputs.Validate_Time = function()
         local minute_check = minutes >= 0 and minutes <= 59
         local second_check = seconds >= 0 and seconds <= 59
         if not (hour_check and minute_check and second_check) then
-            err = "Invalid Time"
+            err = "{HH:MM:SS}"
             return false, err, default_time
         end
 
@@ -209,7 +209,7 @@ Inputs.Validate_Time = function()
             meridiem = "PM"
         end
     else
-        err = "Invalid Time"
+        err = "{HH:MM:SS}"
         return false, err, default_time
     end
 
