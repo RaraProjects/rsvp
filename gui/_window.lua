@@ -16,3 +16,15 @@ Window.Colors = T{
     DEFAULT  = {0.18, 0.20, 0.23, 0.96},
     INACTIVE = {0.4,  0.4,  0.4,  1.0},
 }
+
+------------------------------------------------------------------------------------------------------
+-- Sets the table row color.
+------------------------------------------------------------------------------------------------------
+---@param row integer
+------------------------------------------------------------------------------------------------------
+Window.Table_Row_Color = function(row)
+    local x, y, z, w = UI.GetStyleColorVec4(ImGuiCol_TableRowBg)
+    if (row % 2) == 0 then x, y, z, w = UI.GetStyleColorVec4(ImGuiCol_TableRowBgAlt) end
+    local row_color = UI.GetColorU32({x, y, z, w})
+    UI.TableSetBgColor(ImGuiTableBgTarget_RowBg0, row_color)
+end

@@ -43,11 +43,31 @@ end
 -- ------------------------------------------------------------------------------------------------------
 Config.Help_Text = function()
     if UI.BeginTabItem("Help") then
-        UI.Text("Read Me: https://github.com/RaraProjects/rsvp")
-        UI.Text("Version: " .. tostring(addon.version))
-        UI.Text("")
-        UI.Text("Base command: /rsvp")
-        UI.Text("Arguments:")
+
+        if UI.BeginTable("Help General", 2, Config.Table_Flags) then
+            UI.TableSetupColumn("Col1")
+            UI.TableSetupColumn("Col2")
+
+            UI.TableNextRow()
+            UI.TableNextColumn() UI.Text("GitHub")
+            UI.TableNextColumn() UI.Text("https://github.com/RaraProjects/rsvp")
+            Window.Table_Row_Color(1)
+
+            UI.TableNextColumn() UI.Text("Discord")
+            UI.TableNextColumn() UI.Text("https://discord.gg/u5yqUbR6R7")
+            Window.Table_Row_Color(0)
+
+            UI.TableNextColumn() UI.Text("Version")
+            UI.TableNextColumn() UI.Text(tostring(addon.version))
+            Window.Table_Row_Color(1)
+
+            UI.TableNextColumn() UI.Text("Command")
+            UI.TableNextColumn() UI.Text("/rsvp")
+            Window.Table_Row_Color(0)
+
+            UI.EndTable()
+        end
+
         if UI.BeginTable("Text Commands", 3, Config.Table_Flags) then
             UI.TableSetupColumn("Full")
             UI.TableSetupColumn("Short")
@@ -71,6 +91,7 @@ Config.Help_Text = function()
 
             UI.EndTable()
         end
+
         UI.EndTabItem()
     end
 end
