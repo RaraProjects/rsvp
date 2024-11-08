@@ -12,21 +12,32 @@ This is an approved Horizon addon (06/26/24 addonreq-0604).
 8. Timers persist until you cancel them so you can see how overdue you are.
 
 ## Basic Timers
-![image](https://github.com/RaraProjects/rsvp/assets/72292212/3613c86a-19bf-457c-92ea-0ba939b09e9c)<br>
-_Example clock, timer list, and timer creation screen._<br>
-_Left Top: In game clock that shows local time._<br>
-_Left Bottom: Timer list in basic mode._<br>
-_Right: Timer creation window for creating minute based timers._<br>
+The main portion of the addon is the timer list and timer creation screen.<br><br>
+![image](https://github.com/user-attachments/assets/54821bdb-44ae-4d4c-abae-0bf4191c0555)<br>
+_Left: Timer List in Basic Mode showing some example timers. Right: RSVP Creation window showing the Relative timer options._
 
-## Scheduling
-* 10M7: For land king HNMs that have a one hour window with ten minute sub-windows for a total of seven windows.
-* 1H25: For wyrm HNMs that have a 24 hour window with one hour sub-windows for a total of 25 windows.
+### Timer List
+The timer list is designed to be visible most of the time.
 
-![image](https://github.com/RaraProjects/rsvp/assets/72292212/7ceae5ee-60c1-420b-ac41-a33bd5a22d45)<br>
-_Expanded timer list and future scheduling timer creation options._
+#### Buttons at the Top
+1. "+" : Opens and closes the RSVP Creation window.
+2. Group: By default, grouped timers are collapsed and you can only see the nearest timer. Enabling Group Mode allows you to expand grouped timers and delete individual windows or the entire group.
+3. Stamp: Toggles from countdown mode to timestamp mode. Timestamp mode lets you see the time you are counting down to. It's useful if you ever doubt that you typed the time in wrong.
+4. Filt: You can configure a time filter in RSVP Settings that allows you to hide timers that are more than {X} amount of hours in the future. If you want to temporarily peak at those timers you can turn the filter off with this button to see them. The number in parenthesis shows how many timers are currently being filtered.
 
-## Grouping
+#### Grouping
 Grouped timers are collapsed by default to save space. You can expand them to delete subsequent timers individually. You can also delete the whole group easily.
 
-![image](https://github.com/RaraProjects/rsvp/assets/72292212/5e0ba321-f6a1-453a-860b-0279fd07307c)<br>
+![image](https://github.com/user-attachments/assets/72d7576b-4536-4552-97c9-e12d46fe8243)<br>
 _Example of an HNM timer that has the subsequent timers expanded._
+
+### RSVP Creation
+The RSVP Creation window is where you will create the timers. It has two sections based on what type of timer you are trying to create.<br><br>
+![image](https://github.com/user-attachments/assets/fd9c00e0-c1a3-451e-b287-44ef4fe51f6e)<br>
+_Left: Timer List in Group Mode. Right: RSVP Creation Window showing Specific timer options._
+
+#### Relative 
+Relative timers are created {X} amount of minutes into the future from the current time. If a mob dies now and it respawns in 5 minutes then you would create a Relative timer for 5 minutes to track its next spawn time. There are quick buttons available for some common times otherwise you can enter a custom amount of minutes. Relative timers do NOT require a name. If you want to quickly make a timer without thinking about a name just press the quick button or Create button and the timer will be created. Its name will be the timestamp that you are counting down to.
+#### Specific
+Specific timers are created by entering a specific date and time to count down to. There can be useful for HNMs or other events. Names are required for these and the time and dates need to be in the formats HH:MM:SS (AM/PM) and MM/DD/YY , respectively. The AM/PM is optional if you want to use 24-hour time. A timer preview is provided so that you can see what the addon thinks you're entering. The Sim: row is a simulation of what the timer will look like once created. Some quick buttons are available for creating timer groups for HNMs. The "10M7" buttons is for your 1-hour 10-minute windows like Fafnir (7 total windows). The "1H25" is for your 24-hour 1-hour windows like Tiamat (25 total windows). If you need to make a grouped timer with custom windows you can do that as well by expanding the "Custom Windows" drop down.
+
