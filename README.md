@@ -2,6 +2,13 @@ _Note: Some features such as audible notifications when the timer reaches zero o
 
 This is an approved Horizon addon (06/26/24 addonreq-0604).
 
+## How to Install
+1. On the right side of the Github page (to the right of all the files) there is a section called "Releases".
+2. Click the release that is marked as "Latest".
+3. Inside the release there is a file called rsvp.zip. Download that. You don't need the "Source code" files.
+5. Go to your download location and extract rsvp.zip. You should end up with a folder called "rsvp".
+6. Put that "rsvp" folder in your addon folder. For Horizon it's probably something like ~/HorizonXI/Game/addons.
+
 ## Features
 1. Local clock
 2. Set a timer for {X} minutes in to the future. Quick buttons are available for common times.
