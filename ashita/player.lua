@@ -1,4 +1,4 @@
-Ashita.Player = T{}
+Ashita.Player = { }
 
 -- ------------------------------------------------------------------------------------------------------
 -- Checks whether a player is currently logged in or not.
@@ -7,15 +7,18 @@ Ashita.Player = T{}
 -- ------------------------------------------------------------------------------------------------------
 ---@return boolean
 -- ------------------------------------------------------------------------------------------------------
-Ashita.Player.Is_Logged_In = function()
-    local logged_in = false
+Ashita.Player.IsLoggedIn = function()
+    local isLoggedIn  = false
     local playerIndex = AshitaCore:GetMemoryManager():GetParty():GetMemberTargetIndex(0)
+
     if playerIndex ~= 0 then
         local entity = AshitaCore:GetMemoryManager():GetEntity()
-        local flags = entity:GetRenderFlags0(playerIndex)
+        local flags  = entity:GetRenderFlags0(playerIndex)
+
         if bit.band(flags, 0x200) == 0x200 and bit.band(flags, 0x4000) == 0 then
-            logged_in = true
+            isLoggedIn = true
         end
     end
-    return logged_in
+
+    return isLoggedIn
 end

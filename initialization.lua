@@ -26,7 +26,7 @@ end)
 ------------------------------------------------------------------------------------------------------
 -- Check for character switches. Reloads character specific MP settings.
 ------------------------------------------------------------------------------------------------------
-Settings.register(Clock.ALIAS, "settings_update", function(settings)
+Settings.register(Clock.ALIAS, 'settings_update', function(settings)
     if settings ~= nil then
         RSVP.Clock = settings
         Clock.Reset_Position = true
@@ -37,7 +37,7 @@ end)
 ------------------------------------------------------------------------------------------------------
 -- Check for character switches. Reloads character specific MP settings.
 ------------------------------------------------------------------------------------------------------
-Settings.register(List.ALIAS, "settings_update", function(settings)
+Settings.register(List.ALIAS, 'settings_update', function(settings)
     if settings ~= nil then
         RSVP.List = settings
         List.Reset_Position = true
@@ -48,7 +48,7 @@ end)
 ------------------------------------------------------------------------------------------------------
 -- Check for character switches. Reloads character specific MP settings.
 ------------------------------------------------------------------------------------------------------
-Settings.register(Create.ALIAS, "settings_update", function(settings)
+Settings.register(Create.ALIAS, 'settings_update', function(settings)
     if settings ~= nil then
         RSVP.Create = settings
         Create.Reset_Position = true
@@ -59,7 +59,7 @@ end)
 ------------------------------------------------------------------------------------------------------
 -- Check for character switches. Reloads character specific MP settings.
 ------------------------------------------------------------------------------------------------------
-Settings.register(Config.ALIAS, "settings_update", function(settings)
+Settings.register(Config.ALIAS, 'settings_update', function(settings)
     if settings ~= nil then
         RSVP.Config = settings
         Config.Reset_Position = true

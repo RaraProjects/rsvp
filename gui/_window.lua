@@ -1,8 +1,11 @@
-Window = T{}
+Window = { }
 
-Window.Window_Flags = bit.bor(ImGuiWindowFlags_AlwaysAutoResize,
-ImGuiWindowFlags_NoSavedSettings, ImGuiWindowFlags_NoFocusOnAppearing,
-ImGuiWindowFlags_NoNav)
+Window.Window_Flags = bit.bor(
+    ImGuiWindowFlags_AlwaysAutoResize,
+    ImGuiWindowFlags_NoSavedSettings,
+    ImGuiWindowFlags_NoFocusOnAppearing,
+    ImGuiWindowFlags_NoNav
+)
 
 Window.Tab_Flags = ImGuiTabBarFlags_None
 
@@ -22,9 +25,14 @@ Window.Colors = T{
 ------------------------------------------------------------------------------------------------------
 ---@param row integer
 ------------------------------------------------------------------------------------------------------
-Window.Table_Row_Color = function(row)
+Window.TableRowColor = function(row)
     local x, y, z, w = UI.GetStyleColorVec4(ImGuiCol_TableRowBg)
-    if (row % 2) == 0 then x, y, z, w = UI.GetStyleColorVec4(ImGuiCol_TableRowBgAlt) end
-    local row_color = UI.GetColorU32({x, y, z, w})
-    UI.TableSetBgColor(ImGuiTableBgTarget_RowBg0, row_color)
+
+    if (row % 2) == 0 then
+        x, y, z, w = UI.GetStyleColorVec4(ImGuiCol_TableRowBgAlt)
+    end
+
+    local rowColor = UI.GetColorU32({ x, y, z, w })
+
+    UI.TableSetBgColor(ImGuiTableBgTarget_RowBg0, rowColor)
 end

@@ -1,31 +1,81 @@
-List.Buttons = T{}
+List.Buttons = { }
 
 -- ------------------------------------------------------------------------------------------------------
 -- Displays a create new button.
 -- ------------------------------------------------------------------------------------------------------
-List.Buttons.Create_New = function()
-    if UI.SmallButton(" + ") then Config.Toggle.Create_Window_Visibility() end
+local createNew = function()
+    if UI.SmallButton(' + ') then
+        Config.Toggle.CreateWindowVisibility()
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Shows the toggle group mode button.
+-- ------------------------------------------------------------------------------------------------------
+local toggleGroupMode = function()
+    if UI.SmallButton('Group') then
+        RSVP.List.Group_Mode = not RSVP.List.Group_Mode
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Shows the toggle timestamp button.
+-- ------------------------------------------------------------------------------------------------------
+local toggleTimestamp = function()
+    local caption = 'Timer'
+
+    if RSVP.List.Show_Countdown then
+        caption = 'Stamp'
+    end
+
+    if UI.SmallButton(caption) then
+        RSVP.List.Show_Countdown = not RSVP.List.Show_Countdown
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Shows the toggle filter button.
+-- ------------------------------------------------------------------------------------------------------
+local toggleFilter = function()
+    local caption = 'Filt: OFF'
+
+    if RSVP.List.Apply_Filter then
+        caption = string.format('Filt: (%d)', List.Filtered)
+    end
+
+    UI.PushID('Filter')
+
+    if UI.SmallButton(caption) then
+        RSVP.List.Apply_Filter = not RSVP.List.Apply_Filter
+    end
 end
 
 -- ------------------------------------------------------------------------------------------------------
 -- Displays the mode buttons at the top of the timer list.
 -- ------------------------------------------------------------------------------------------------------
-List.Buttons.Mode_Buttons = function()
-    List.Buttons.Create_New()
-    UI.SameLine() List.Buttons.Toggle_Group_Mode()
-    UI.SameLine() List.Buttons.Toggle_Timestamp()
-    UI.SameLine() List.Buttons.Toggle_Filter()
+List.Buttons.ModeButtons = function()
+    createNew()
+    UI.SameLine() toggleGroupMode()
+    UI.SameLine() toggleTimestamp()
+    UI.SameLine() toggleFilter()
 end
 
 -- ------------------------------------------------------------------------------------------------------
 -- Creates the delete comment button.
 -- ------------------------------------------------------------------------------------------------------
----@param timer_name string
+---@param timerName string
 -- ------------------------------------------------------------------------------------------------------
-List.Buttons.Delete_Timer = function(timer_name)
-    if not timer_name then return nil end
-    UI.PushID(timer_name)
-    if UI.Button(" X ") then Timers.End(timer_name) end
+List.Buttons.DeleteTimer = function(timerName)
+    if not timerName then
+        return nil
+    end
+
+    UI.PushID(timerName)
+
+    if UI.Button(' X ') then
+        Timers.End(timerName)
+    end
+
     UI.PopID()
 end
 
@@ -34,13 +84,20 @@ end
 -- ------------------------------------------------------------------------------------------------------
 ---@param group string
 -- ------------------------------------------------------------------------------------------------------
-List.Buttons.Set_Group_Expansion = function(group)
-    if not group then return nil end
-    local caption = " + "
-    local expanded = Timers.Groups.Is_Expanded(group)
-    if expanded then caption = " - " end
+List.Buttons.SetGroupExpansion = function(group)
+    if not group then
+        return nil
+    end
+
+    local caption  = ' + '
+    local expanded = Timers.Groups.IsExpanded(group)
+
+    if expanded then
+        caption = ' - '
+    end
 
     UI.PushID(group)
+
     if UI.Button(caption) then
         if expanded then
             Timers.Groups.Collapse(group)
@@ -48,6 +105,7 @@ List.Buttons.Set_Group_Expansion = function(group)
             Timers.Groups.Expand(group)
         end
     end
+
     UI.PopID()
 end
 
@@ -56,35 +114,16 @@ end
 -- ------------------------------------------------------------------------------------------------------
 ---@param group string
 -- ------------------------------------------------------------------------------------------------------
-List.Buttons.Delete_Group = function(group)
-    if not group then return nil end
+List.Buttons.DeleteGroup = function(group)
+    if not group then
+        return nil
+    end
+
     UI.PushID(group)
-    if UI.Button(" X ") then Timers.Groups.Delete(group) end
+
+    if UI.Button(' X ') then
+        Timers.Groups.Delete(group)
+    end
+
     UI.PopID()
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Shows the toggle group mode button.
--- ------------------------------------------------------------------------------------------------------
-List.Buttons.Toggle_Group_Mode = function()
-    if UI.SmallButton("Group") then RSVP.List.Group_Mode = not RSVP.List.Group_Mode end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Shows the toggle timestamp button.
--- ------------------------------------------------------------------------------------------------------
-List.Buttons.Toggle_Timestamp = function()
-    local caption = "Timer"
-    if RSVP.List.Show_Countdown then caption = "Stamp" end
-    if UI.SmallButton(caption) then RSVP.List.Show_Countdown = not RSVP.List.Show_Countdown end
-end
-
--- ------------------------------------------------------------------------------------------------------
--- Shows the toggle filter button.
--- ------------------------------------------------------------------------------------------------------
-List.Buttons.Toggle_Filter = function()
-    local caption = "Filt: OFF"
-    if RSVP.List.Apply_Filter then caption = "Filt: (" .. tostring(List.Filtered) .. ")" end
-    UI.PushID("Filter")
-    if UI.SmallButton(caption) then RSVP.List.Apply_Filter = not RSVP.List.Apply_Filter end
 end

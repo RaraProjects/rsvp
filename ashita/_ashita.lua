@@ -1,4 +1,3 @@
-Ashita = T{}
+Ashita = { }
 
-require("ashita.player")
-require("ashita.chat")
+require('ashita.player')
