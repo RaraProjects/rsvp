@@ -31,6 +31,7 @@ Settings = require('settings')
 UI       = require('imgui')
 
 require('ashita._ashita')
+require('version')
 require('gui._window')
 require('config._config')
 require('clock._clock')

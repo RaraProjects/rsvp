@@ -197,6 +197,16 @@ local settings = function()
     end
 end
 
+-- ------------------------------------------------------------------------------------------------------
+-- Shows the update section.
+-- ------------------------------------------------------------------------------------------------------
+local updates = function()
+    if UI.BeginTabItem('Update') then
+        Version.Populate()
+        UI.EndTabItem()
+    end
+end
+
 ------------------------------------------------------------------------------------------------------
 -- Sets the window scaling.
 ------------------------------------------------------------------------------------------------------
@@ -224,6 +234,7 @@ Config.Display = function()
             if UI.BeginTabBar('Settings Tabs', ImGuiTabBarFlags_None) then
                 helpText()
                 settings()
+                updates()
                 UI.EndTabBar()
             end
 

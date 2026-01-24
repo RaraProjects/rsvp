@@ -33,6 +33,7 @@
         "ImGuiConfigFlags_NavEnableKeyboard",
         "ImGuiInputTextFlags_AutoSelectAll",
         "ImGuiInputTextFlags_None",
-        "ImGuiTableBgTarget_RowBg0"
+        "ImGuiTableBgTarget_RowBg0",
+        "ImGuiTableFlags_SizingFixedFit"
     ]
 }
