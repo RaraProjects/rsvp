@@ -48,6 +48,8 @@ local toggleFilter = function()
     if UI.SmallButton(caption) then
         RSVP.List.Apply_Filter = not RSVP.List.Apply_Filter
     end
+
+    UI.PopID()
 end
 
 -- ------------------------------------------------------------------------------------------------------

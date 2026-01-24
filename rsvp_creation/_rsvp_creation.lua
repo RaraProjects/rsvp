@@ -130,16 +130,6 @@ local makeSpecificTimer = function()
     end
 end
 
-------------------------------------------------------------------------------------------------------
--- Sets the window scaling.
-------------------------------------------------------------------------------------------------------
-local setWindowScaling = function()
-    if not Create.Scaling_Set then
-        UI.SetWindowFontScale(Config.GetScale())
-        Create.SetScalingFlag(true)
-    end
-end
-
 -- ------------------------------------------------------------------------------------------------------
 -- Show the reminder creation window.
 -- ------------------------------------------------------------------------------------------------------
@@ -151,19 +141,23 @@ Create.Display = function()
         end
 
         UI.PushStyleColor(ImGuiCol_WindowBg, Window.Colors.DEFAULT)
+        Window.SetScaling()
 
         if UI.Begin('RSVP Creation', RSVP.Create.Visible, Window.Window_Flags) then
             RSVP.Create.X_Pos, RSVP.Create.Y_Pos = UI.GetWindowPos()
-            setWindowScaling()
+            Window.SetLegacyScaling()
 
             if UI.BeginTabBar('Reminder Types', Window.Tab_Flags) then
                 makeRelativeTimer()
                 makeSpecificTimer()
                 UI.EndTabBar()
             end
+
+            Window.SetLegacyScaling(Config.GetScale())
+            UI.End()
         end
 
-        UI.End()
+        Window.SetScaling(Config.GetScale())
         UI.PopStyleColor(1)
     end
 end

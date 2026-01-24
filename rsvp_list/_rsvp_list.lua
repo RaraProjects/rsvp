@@ -40,7 +40,7 @@ require('rsvp_list.buttons')
 ---@return integer
 ---@return boolean
 -- ------------------------------------------------------------------------------------------------------
-local columns = function()
+local columnsCount = function()
     local showGroups = false
     local columns    = 3
 
@@ -122,16 +122,6 @@ local timerColor = function(name)
     return timer, color
 end
 
-------------------------------------------------------------------------------------------------------
--- Sets the window scaling.
-------------------------------------------------------------------------------------------------------
-local setWindowScaling = function()
-    if not List.Scaling_Set then
-        UI.SetWindowFontScale(Config.GetScale())
-        List.SetScalingFlag(true)
-    end
-end
-
 -- ------------------------------------------------------------------------------------------------------
 -- Show the list of reminders.
 -- ------------------------------------------------------------------------------------------------------
@@ -151,15 +141,17 @@ List.Display = function()
             List.Reset_Position = false
         end
 
+        Window.SetScaling()
+
         if UI.Begin('RSVP Timer List', RSVP.List.Visible, windowFlags) then
             RSVP.List.X_Pos, RSVP.List.Y_Pos = UI.GetWindowPos()
-            setWindowScaling()
+            Window.SetLegacyScaling()
 
             local filteredTimers = 0
 
             List.Buttons.ModeButtons()
             if Timers.Count > 0 then
-                local columns, showGroups = columns()
+                local columns, showGroups = columnsCount()
                 local shownTimers = 0
 
                 if UI.BeginTable('List', columns, List.Table_Flags) then
@@ -218,9 +210,12 @@ List.Display = function()
             else
                 UI.Text('No timers set.')
             end
+
+            Window.SetLegacyScaling(Config.GetScale())
+            UI.End()
         end
 
-        UI.End()
+        Window.SetScaling(Config.GetScale())
         UI.PopStyleColor(2)
     end
 end

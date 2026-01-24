@@ -207,16 +207,6 @@ local updates = function()
     end
 end
 
-------------------------------------------------------------------------------------------------------
--- Sets the window scaling.
-------------------------------------------------------------------------------------------------------
-local setWindowScaling = function()
-    if Config.Scaling_Set then
-        UI.SetWindowFontScale(Config.GetScale())
-        setScalingFlag(true)
-    end
-end
-
 -- ------------------------------------------------------------------------------------------------------
 -- Displays the configuration window.
 -- ------------------------------------------------------------------------------------------------------
@@ -227,9 +217,11 @@ Config.Display = function()
             Config.Reset_Position = false
         end
 
+        Window.SetScaling()
+
         if UI.Begin('RSVP Config', Config.Visible, Window.Window_Flags) then
             RSVP.Config.X_Pos, RSVP.Config.Y_Pos = UI.GetWindowPos()
-            setWindowScaling()
+            Window.SetLegacyScaling()
 
             if UI.BeginTabBar('Settings Tabs', ImGuiTabBarFlags_None) then
                 helpText()
@@ -238,8 +230,11 @@ Config.Display = function()
                 UI.EndTabBar()
             end
 
+            Window.SetLegacyScaling(Config.GetScale())
             UI.End()
         end
+
+        Window.SetScaling(Config.GetScale())
     end
 end
 

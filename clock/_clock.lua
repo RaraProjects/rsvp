@@ -26,16 +26,6 @@ Clock.ALIAS          = 'clock'
 Clock.Scaling_Set    = false
 Clock.Reset_Position = true
 
-------------------------------------------------------------------------------------------------------
--- Sets the window scaling.
-------------------------------------------------------------------------------------------------------
-local setWindowScaling = function()
-    if not Clock.Scaling_Set then
-        UI.SetWindowFontScale(Config.GetScale())
-        Clock.SetScalingFlag(true)
-    end
-end
-
 -- ------------------------------------------------------------------------------------------------------
 -- Show the clock.
 -- ------------------------------------------------------------------------------------------------------
@@ -47,10 +37,11 @@ Clock.Display = function()
         end
 
         UI.PushStyleColor(ImGuiCol_TableRowBg, Window.Colors.BLACK)
+        Window.SetScaling()
 
         if UI.Begin('Clock', RSVP.Clock.Visible, Clock.Window_Flags) then
             RSVP.Clock.X_Pos, RSVP.Clock.Y_Pos = UI.GetWindowPos()
-            setWindowScaling()
+            Window.SetLegacyScaling()
 
             if UI.BeginTable('Clock', 1, Clock.Table_Flags) then
                 local now = os.time()
@@ -58,9 +49,12 @@ Clock.Display = function()
                 UI.TableNextColumn() UI.Text(os.date('%X %p', now))
                 UI.EndTable()
             end
+
+            Window.SetLegacyScaling(Config.GetScale())
+            UI.End()
         end
 
-        UI.End()
+        Window.SetScaling(Config.GetScale())
         UI.PopStyleColor(1)
     end
 end
