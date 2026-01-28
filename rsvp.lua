@@ -25,7 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 addon.author  = 'Metra'
 addon.name    = 'rsvp'
-addon.version = '2026-01-23'
+addon.version = '2026-01-27'
 
 Settings = require('settings')
 UI       = require('imgui')
@@ -72,11 +72,11 @@ end)
 -- Influenced by HXUI: https://github.com/tirem/HXUI
 ------------------------------------------------------------------------------------------------------
 ashita.events.register('command', 'command_cb', function (e)
-    local command_args = e.command:lower():args()
+    local commandArgs = e.command:lower():args()
 
     ---@diagnostic disable-next-line: undefined-field
-    if table.contains({'/rsvp'}, command_args[1]) then
-        local arg = command_args[2]
+    if table.contains({'/rsvp'}, commandArgs[1]) then
+        local arg = commandArgs[2]
 
         if not arg then
             Config.Toggle.ConfigWindowVisibility()
@@ -89,6 +89,17 @@ ashita.events.register('command', 'command_cb', function (e)
 
         elseif arg == 'timers' or arg == 'list' or arg == 't' or arg == 'l' then
             Config.Toggle.ListWindowVisibility()
+
+        elseif arg == 'rel' then
+            local name    = commandArgs[3] or 'Default Name'
+            local minutes = tonumber(commandArgs[4])
+
+            if not minutes then
+                Ashita.Chat.Echo('Invalid minute parameter.')
+                return nil
+            end
+
+            Timers.Start(name, minutes)
         end
     end
 end)
