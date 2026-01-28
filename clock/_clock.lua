@@ -46,7 +46,7 @@ Clock.Display = function()
             if UI.BeginTable('Clock', 1, Clock.Table_Flags) then
                 local now = os.time()
 
-                UI.TableNextColumn() UI.Text(os.date('%X %p', now))
+                UI.TableNextColumn() UI.Text(os.date('%X', now))
                 UI.EndTable()
             end
 
